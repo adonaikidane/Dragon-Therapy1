@@ -19,7 +19,7 @@ function loadSessions(limit = 50) {
   return arr.slice(-limit);
 }
 
-// -----------------------------------------------------------------------------
+// ------------c----------------------------------------------------------------
 // Router
 // -----------------------------------------------------------------------------
 const app = document.getElementById('app');
@@ -97,6 +97,7 @@ function DashboardPage() {
     if (typeof window.initInjuryGame === 'function') window.initInjuryGame();
   });
 }
+
 
 function CalendarPage() {
   const today = ymd(new Date());

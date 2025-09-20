@@ -306,3 +306,21 @@ hr.sep {
   border-bottom: 1px solid #203260;
   text-align: left;
 }
+
+/* login */
+#loginBtn, #logoutBtn {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+#loginBtn:hover, #logoutBtn:hover {
+  background-color: #0056b3;
+}
+
+#userInfo {
+  margin-top: 20px;
+}
