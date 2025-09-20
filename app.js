@@ -1,63 +1,62 @@
-// app.js — Dashboard (game), Calendar (journal), Results. LocalStorage only.
+// Data and Storage
+const JOURNAL_KEY = 'irt:journal';
+const SESS_KEY = 'irt:sessions';
+const patientData = [
+  { session: 1, avgTime: 3.5, errors: 7, range: 4 },
+  { session: 2, avgTime: 3.1, errors: 5, range: 5 },
+  { session: 3, avgTime: 2.8, errors: 4, range: 6 },
+  { session: 4, avgTime: 2.5, errors: 3, range: 7 },
+  { session: 5, avgTime: 2.3, errors: 2, range: 8 },
+  { session: 6, avgTime: 2.1, errors: 1, range: 9 },
+  { session: 7, avgTime: 2.0, errors: 1, range: 9 },
+  { session: 8, avgTime: 1.9, errors: 0, range: 10 }
+];
 
-// -----------------------------------------------------------------------------
-// Storage
-// -----------------------------------------------------------------------------
-const JOURNAL_KEY = 'irt:journal'; // { "YYYY-MM-DD": { mood, wellbeing, pain, notes, date } }
 function loadJournal() { return JSON.parse(localStorage.getItem(JOURNAL_KEY) || '{}'); }
 function saveJournal(j) { localStorage.setItem(JOURNAL_KEY, JSON.stringify(j)); }
 
-// Optional: sessions (used when game posts results)
-const SESS_KEY = 'irt:sessions';
 function saveSession(s) {
   const arr = JSON.parse(localStorage.getItem(SESS_KEY) || '[]');
   arr.push(s);
   localStorage.setItem(SESS_KEY, JSON.stringify(arr));
 }
+
 function loadSessions(limit = 50) {
   const arr = JSON.parse(localStorage.getItem(SESS_KEY) || '[]');
   return arr.slice(-limit);
 }
 
-// -----------------------------------------------------------------------------
 // Router
-// -----------------------------------------------------------------------------
 const app = document.getElementById('app');
 
 function router() {
-  const route = (location.hash || '#/dashboard').replace('#','');
-
+  const route = (location.hash || '#/dashboard').replace('#', '');
   let page;
   if (route.startsWith('/dashboard')) {
-      page = DashboardPage();
+    page = DashboardPage();
   } else if (route.startsWith('/calendar')) {
-      page = CalendarPage();
+    page = CalendarPage();
   } else if (route.startsWith('/results')) {
-      page = ResultsPage();
+    page = ResultsPage();
   } else if (route.startsWith('/ai-insights')) {
-      page = AI_InsightsPage();
+    page = AI_InsightsPage();
   } else {
-      app.innerHTML = `<section class="panel"><h1>Not Found</h1></section>`;
-      return;
+    app.innerHTML = `<section class="panel"><h1>Not Found</h1></section>`;
+    return;
   }
 
-  // Handle the different page function types
   if (page && typeof page.html === 'string' && typeof page.setup === 'function') {
-      // This is the new AI_InsightsPage type
-      app.innerHTML = page.html;
-      page.setup();
+    app.innerHTML = page.html;
+    page.setup();
   } else if (page) {
-      // This is the old page type that sets innerHTML itself
-      // No extra action needed, the page function already did the work
+    // For legacy pages that handle their own rendering
   }
 }
 
 window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 
-// -----------------------------------------------------------------------------
 // Pages
-// -----------------------------------------------------------------------------
 function DashboardPage() {
   app.innerHTML = `
     <section class="panel">
@@ -89,7 +88,6 @@ function DashboardPage() {
       </div>
     </section>
   `;
-
   // Init game AFTER DOM is present
   if (typeof window.initInjuryGame === 'function') {
     window.initInjuryGame();
@@ -153,18 +151,18 @@ function CalendarPage() {
             <div>
               <label for="wellbeing">Wellbeing</label>
               <select id="wellbeing" class="input">
-                ${['great','good','okay','meh','poor'].map(v => `<option ${v===selected.wellbeing?'selected':''}>${v}</option>`).join('')}
+                ${['great', 'good', 'okay', 'meh', 'poor'].map(v => `<option ${v === selected.wellbeing ? 'selected' : ''}>${v}</option>`).join('')}
               </select>
             </div>
 
             <div>
               <label for="pain">Pain (optional — area or 0–10)</label>
-              <input id="pain" class="input" placeholder="e.g., left knee 3/10" value="${escapeHtml(selected.pain||'')}" />
+              <input id="pain" class="input" placeholder="e.g., left knee 3/10" value="${escapeHtml(selected.pain || '')}" />
             </div>
 
             <div>
               <label for="notes">Notes</label>
-              <textarea id="notes" rows="4" class="input" placeholder="How is everything going?">${escapeHtml(selected.notes||'')}</textarea>
+              <textarea id="notes" rows="4" class="input" placeholder="How is everything going?">${escapeHtml(selected.notes || '')}</textarea>
             </div>
 
             <div class="row" style="justify-content:flex-end;">
@@ -239,12 +237,12 @@ function ResultsPage() {
             <tbody>
               ${sessions.slice(-10).reverse().map(s => `
                 <tr>
-                  <td>${(s.date||'').slice(0,10)}</td>
+                  <td>${(s.date || '').slice(0, 10)}</td>
                   <td>${s.level}</td>
-                  <td>${(s.metrics?.avgSpeedSec||0).toFixed(2)}</td>
-                  <td>${s.metrics?.errors||0}</td>
-                  <td>${s.metrics?.romZones||0}</td>
-                  <td>${Math.round((s.recoveryIndex||0)*100)}</td>
+                  <td>${(s.metrics?.avgSpeedSec || 0).toFixed(2)}</td>
+                  <td>${s.metrics?.errors || 0}</td>
+                  <td>${s.metrics?.romZones || 0}</td>
+                  <td>${Math.round((s.recoveryIndex || 0) * 100)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -253,6 +251,7 @@ function ResultsPage() {
       </div>
     </section>
   `;
+  // Optional: results rendering logic here
 }
 
 // -----------------------------------------------------------------------------
@@ -263,37 +262,37 @@ function drawCalendar(root, state, journal) {
   const year = cur.getFullYear();
   const month = cur.getMonth();
   const firstDow = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
   const todayStr = ymd(new Date());
   const selectedStr = ymd(state.selected);
 
   root.innerHTML = `
     <div class="cal-head">
       <button class="btn secondary" id="prev-month">◀</button>
-      <div><strong>${cur.toLocaleString(undefined,{month:'long'})}</strong> ${year}</div>
+      <div><strong>${cur.toLocaleString(undefined, { month: 'long' })}</strong> ${year}</div>
       <button class="btn secondary" id="next-month">▶</button>
     </div>
     <div class="cal-grid">
-      ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}
-      ${Array.from({length:firstDow}).map(()=>'<div></div>').join('')}
-      ${Array.from({length:daysInMonth}, (_,i)=>{
-        const d = i+1;
-        const dateStr = ymd(new Date(year, month, d));
-        const has = Boolean(journal[dateStr]);
-        const isToday = dateStr === todayStr;
-        const isSel = dateStr === selectedStr;
-        const cls = ['cal-cell', has?'has-entry':'', isToday?'today':'', isSel?'selected':''].join(' ').trim();
-        return `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
-      }).join('')}
+      ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div class="cal-dow">${d}</div>`).join('')}
+      ${Array.from({ length: firstDow }).map(() => '<div></div>').join('')}
+      ${Array.from({ length: daysInMonth }, (_, i) => {
+    const d = i + 1;
+    const dateStr = ymd(new Date(year, month, d));
+    const has = Boolean(journal[dateStr]);
+    const isToday = dateStr === todayStr;
+    const isSel = dateStr === selectedStr;
+    const cls = ['cal-cell', has ? 'has-entry' : '', isToday ? 'today' : '', isSel ? 'selected' : ''].join(' ').trim();
+    return `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
+  }).join('')}
     </div>
   `;
 
   root.querySelector('#prev-month').onclick = () => {
-    state.cursor = new Date(year, month-1, 1);
+    state.cursor = new Date(year, month - 1, 1);
     drawCalendar(root, state, journal);
   };
   root.querySelector('#next-month').onclick = () => {
-    state.cursor = new Date(year, month+1, 1);
+    state.cursor = new Date(year, month + 1, 1);
     drawCalendar(root, state, journal);
   };
   root.querySelectorAll('.cal-cell').forEach(cell => {
@@ -301,7 +300,7 @@ function drawCalendar(root, state, journal) {
       state.selected = new Date(cell.dataset.date);
       // load selected day into form (if present)
       const j = loadJournal();
-      const e = j[cell.dataset.date] || { date: cell.dataset.date, mood: 3, wellbeing: 'okay', pain:'', notes:'' };
+      const e = j[cell.dataset.date] || { date: cell.dataset.date, mood: 3, wellbeing: 'okay', pain: '', notes: '' };
       const mood = document.getElementById('mood');
       if (mood) {
         document.getElementById('mood').value = e.mood;
@@ -317,23 +316,23 @@ function drawCalendar(root, state, journal) {
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
-function ymd(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0,10); }
-function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
-function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function renderEntry(e){
+function ymd(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0, 10); }
+function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function escapeHtml(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+function renderEntry(e) {
   return `<p><strong>${e.date}</strong></p>
           <p>Mood: ${e.mood}/5</p>
           <p>Wellbeing: ${e.wellbeing}</p>
-          <p>Pain: ${escapeHtml(e.pain||'—')}</p>
-          <p>Notes: ${escapeHtml(e.notes||'—')}</p>`;
+          <p>Pain: ${escapeHtml(e.pain || '—')}</p>
+          <p>Notes: ${escapeHtml(e.notes || '—')}</p>`;
 }
-function renderWellbeingBars(entries){
+function renderWellbeingBars(entries) {
   if (!entries.length) return '<p>No data yet.</p>';
-  const counts = entries.reduce((acc, e) => (acc[e.wellbeing]=(acc[e.wellbeing]||0)+1, acc), {});
-  const all = ['great','good','okay','meh','poor'];
+  const counts = entries.reduce((acc, e) => (acc[e.wellbeing] = (acc[e.wellbeing] || 0) + 1, acc), {});
+  const all = ['great', 'good', 'okay', 'meh', 'poor'];
   const total = entries.length || 1;
-  return all.map(k=>{
-    const n = counts[k]||0; const pct = Math.round((n/total)*100);
+  return all.map(k => {
+    const n = counts[k] || 0; const pct = Math.round((n / total) * 100);
     return `<div style="margin:8px 0;">
       <div class="row" style="justify-content:space-between;">
         <span>${k}</span><span>${n} (${pct}%)</span>
@@ -351,79 +350,40 @@ let isDark = false;
 
 if (toggleButton && themeIcon) {
   toggleButton.addEventListener('click', () => {
-      isDark = !isDark;
-      
-      // Toggle the dark theme class on the body
-      document.body.classList.toggle('dark-theme', isDark);
-      document.body.classList.toggle('light-theme', !isDark);
+    isDark = !isDark;
 
-      // Change the icon based on the theme
-      if (isDark) {
-          themeIcon.src = "./img/mode.png";  // Dark theme icon
-          themeIcon.alt = 'Dark theme';
-      } else {
-          themeIcon.src = "./img/dark-mode.png";  // Light theme icon
-          themeIcon.alt = 'Light theme';
-      }
+    // Toggle the dark theme class on the body
+    document.body.classList.toggle('dark-theme', isDark);
+    document.body.classList.toggle('light-theme', !isDark);
+
+    // Change the icon based on the theme
+    if (isDark) {
+      themeIcon.src = "./img/mode.png";  // Dark theme icon
+      themeIcon.alt = 'Dark theme';
+    } else {
+      themeIcon.src = "./img/dark-mode.png";  // Light theme icon
+      themeIcon.alt = 'Light theme';
+    }
   });
 }
+
+// AI Insights Page (separate from chatbot)
 function AI_InsightsPage() {
-  const patientData = [
-    { session: 1, avgTime: 3.5, errors: 7, range: 4 },
-    { session: 2, avgTime: 3.1, errors: 5, range: 5 },
-    { session: 3, avgTime: 2.8, errors: 4, range: 6 },
-    { session: 4, avgTime: 2.5, errors: 3, range: 7 },
-    { session: 5, avgTime: 2.3, errors: 2, range: 8 },
-    { session: 6, avgTime: 2.1, errors: 1, range: 9 },
-    { session: 7, avgTime: 2.0, errors: 1, range: 9 },
-    { session: 8, avgTime: 1.9, errors: 0, range: 10 }
-  ];
-
   const html = `
-  <div id="correlation-container">
-    <h1>AI Insights: Correlations in Patient Activity</h1>
-    <div class="button-row">
-      <button id="analyze-btn">Analyze Data for Correlations</button>
-      <button id="outliers-btn">Analyze Data for Outliers</button>
-    </div>
-    <div id="ai-analysis-output"></div>
-  </div>
-
-  <div id="chatbot-container">
-    <h1>AI Progress Chatbot</h1>
-    <div id="chatbox">
-      <div class="message system-message">
-        <p> Hello! I'm here to answer questions about the patient's progress. </p>
-        <p> You can ask me things like, "What does the range of motion data mean?" </p>
-        <p> </p>
+    <section class="panel">
+      <h1>AI Insights: Correlations in Patient Activity</h1>
+      <div class="button-row">
+        <button id="analyze-btn">Analyze Data for Correlations</button>
+        <button id="outliers-btn">Analyze Data for Outliers</button>
       </div>
-    </div>
-    <div class="chat-input-container">
-      <input type="text" id="chat-input" placeholder="Ask a question...">
-      <button id="chat-send-btn">Send</button>
-    </div>
-  </div>
+      <div id="ai-analysis-output"></div>
+    </section>
   `;
 
   const setup = () => {
-    let hasGreeted = false;
-
     const outputDiv = document.getElementById("ai-analysis-output");
     const analyzeBtn = document.getElementById("analyze-btn");
     const outliersBtn = document.getElementById("outliers-btn");
-    const chatInput = document.getElementById("chat-input");
-    const chatSendBtn = document.getElementById("chat-send-btn");
-    const chatbox = document.getElementById("chatbox");
-
-    function addMessageToChatbox(text, sender) {
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message");
-      messageDiv.classList.add(sender === "user" ? "user-message" : "system-message");
-      messageDiv.textContent = text;
-      chatbox.appendChild(messageDiv);
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
-
     analyzeBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data with AI...";
       try {
@@ -471,38 +431,100 @@ function AI_InsightsPage() {
         console.error("Fetch error:", e);
       }
     });
-
-    chatSendBtn.addEventListener("click", async () => {
-      const userMessage = chatInput.value.trim();
-      if (userMessage === "") return;
-      if (!hasGreeted) {
-        chatbox.innerHTML = "";
-        hasGreeted = true;
-      }
-      addMessageToChatbox(userMessage, "user");
-      chatInput.value = "";
-      try {
-        addMessageToChatbox("Typing...", "system");
-        const response = await fetch('http://localhost:3000/chatbot', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: userMessage, data: patientData })
-        });
-        const result = await response.json();
-        chatbox.removeChild(chatbox.lastChild);
-        addMessageToChatbox(result.response, "system");
-      } catch (e) {
-        chatbox.removeChild(chatbox.lastChild);
-        addMessageToChatbox("Sorry, I could not process that request.", "system");
-        console.error("Chatbot error:", e);
-      }
-    });
-
-    chatInput.addEventListener("keypress", (event) => {
-      if (event.key === "Enter") {
-        chatSendBtn.click();
-      }
-    });
   };
+
   return { html, setup };
 }
+
+// Initialize Floating Chatbot
+function initFloatingChatbot() {
+  const chatToggleBtn = document.getElementById('chat-toggle-btn');
+  const chatbotContainer = document.getElementById('floating-chatbot-container');
+  const chatInput = document.getElementById('chat-input');
+  const chatSendBtn = document.getElementById('chat-send-btn');
+  const chatbox = document.getElementById('chatbox');
+  let hasGreeted = false;
+
+  // Chatbot toggle logic
+  chatToggleBtn.addEventListener('click', () => {
+    chatbotContainer.classList.toggle('is-visible');
+  });
+
+  // Helper function to add messages to the chatbox
+  function addMessageToChatbox(text, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message");
+    messageDiv.classList.add(sender === "user" ? "user-message" : "system-message");
+    messageDiv.textContent = text;
+    chatbox.appendChild(messageDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+  // Chatbot send message logic
+  chatSendBtn.addEventListener("click", async () => {
+    const userMessage = chatInput.value.trim();
+    if (userMessage === "") return;
+
+    if (!hasGreeted) {
+      chatbox.innerHTML = "";
+      hasGreeted = true;
+    }
+
+    addMessageToChatbox(userMessage, "user");
+    chatInput.value = "";
+
+    try {
+      addMessageToChatbox("Typing...", "system");
+      const response = await fetch('http://localhost:3000/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: userMessage, data: patientData })
+      });
+
+      const result = await response.json();
+      chatbox.removeChild(chatbox.lastChild);
+      addMessageToChatbox(result.response, "system");
+    } catch (e) {
+      chatbox.removeChild(chatbox.lastChild);
+      addMessageToChatbox("Sorry, I could not process that request.", "system");
+      console.error("Chatbot error:", e);
+    }
+  });
+
+  chatInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      chatSendBtn.click();
+    }
+  });
+}
+
+function setupThemeToggle() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  const icon = document.getElementById('theme-icon');
+  const isDark = localStorage.getItem('theme') === 'dark';
+
+  if (isDark) {
+    document.body.classList.add('dark-theme');
+    icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
+  } else {
+    document.body.classList.add('light-theme');
+    icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-theme');
+    document.body.classList.toggle('light-theme');
+    const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+    localStorage.setItem('theme', currentTheme);
+    if (currentTheme === 'dark') {
+      icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
+    } else {
+      icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+    }
+  });
+}
+
+window.addEventListener('load', () => {
+  router();
+  initFloatingChatbot();
+  setupThemeToggle();
+});
