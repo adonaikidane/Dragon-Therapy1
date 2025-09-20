@@ -117,6 +117,7 @@ function DashboardPage() {
   });
 }
 
+
 function CalendarPage() {
   const today = ymd(new Date());
   const j = loadJournal();
