@@ -26,11 +26,32 @@ const app = document.getElementById('app');
 
 function router() {
   const route = (location.hash || '#/dashboard').replace('#','');
-  if (route.startsWith('/dashboard')) return DashboardPage();
-  if (route.startsWith('/calendar'))  return CalendarPage();
-  if (route.startsWith('/results'))   return ResultsPage();
-  app.innerHTML = `<section class="panel"><h1>Not Found</h1></section>`;
+
+  let page;
+  if (route.startsWith('/dashboard')) {
+      page = DashboardPage();
+  } else if (route.startsWith('/calendar')) {
+      page = CalendarPage();
+  } else if (route.startsWith('/results')) {
+      page = ResultsPage();
+  } else if (route.startsWith('/ai-insights')) {
+      page = AI_InsightsPage();
+  } else {
+      app.innerHTML = `<section class="panel"><h1>Not Found</h1></section>`;
+      return;
+  }
+
+  // Handle the different page function types
+  if (page && typeof page.html === 'string' && typeof page.setup === 'function') {
+      // This is the new AI_InsightsPage type
+      app.innerHTML = page.html;
+      page.setup();
+  } else if (page) {
+      // This is the old page type that sets innerHTML itself
+      // No extra action needed, the page function already did the work
+  }
 }
+
 window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 
@@ -323,26 +344,165 @@ function renderWellbeingBars(entries){
     </div>`;
   }).join('');
 }
-
 //theme toggle icon
 const toggleButton = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 let isDark = false;
 
-toggleButton.addEventListener('click', () => {
-    isDark = !isDark;
-    
-    // Toggle the dark theme class on the body
-    document.body.classList.toggle('dark-theme', isDark);
-    document.body.classList.toggle('light-theme', !isDark);
+if (toggleButton && themeIcon) {
+  toggleButton.addEventListener('click', () => {
+      isDark = !isDark;
+      
+      // Toggle the dark theme class on the body
+      document.body.classList.toggle('dark-theme', isDark);
+      document.body.classList.toggle('light-theme', !isDark);
 
-    // Change the icon based on the theme
-    if (isDark) {
-        themeIcon.src = "./img/mode.png";  // Dark theme icon
-        themeIcon.alt = 'Dark theme';
-    } else {
-        themeIcon.src = "./img/dark-mode.png";  // Light theme icon
-        themeIcon.alt = 'Light theme';
+      // Change the icon based on the theme
+      if (isDark) {
+          themeIcon.src = "./img/mode.png";  // Dark theme icon
+          themeIcon.alt = 'Dark theme';
+      } else {
+          themeIcon.src = "./img/dark-mode.png";  // Light theme icon
+          themeIcon.alt = 'Light theme';
+      }
+  });
+}
+function AI_InsightsPage() {
+  const patientData = [
+    { session: 1, avgTime: 3.5, errors: 7, range: 4 },
+    { session: 2, avgTime: 3.1, errors: 5, range: 5 },
+    { session: 3, avgTime: 2.8, errors: 4, range: 6 },
+    { session: 4, avgTime: 2.5, errors: 3, range: 7 },
+    { session: 5, avgTime: 2.3, errors: 2, range: 8 },
+    { session: 6, avgTime: 2.1, errors: 1, range: 9 },
+    { session: 7, avgTime: 2.0, errors: 1, range: 9 },
+    { session: 8, avgTime: 1.9, errors: 0, range: 10 }
+  ];
+
+  const html = `
+  <div id="correlation-container">
+    <h1>AI Insights: Correlations in Patient Activity</h1>
+    <div class="button-row">
+      <button id="analyze-btn">Analyze Data for Correlations</button>
+      <button id="outliers-btn">Analyze Data for Outliers</button>
+    </div>
+    <div id="ai-analysis-output"></div>
+  </div>
+
+  <div id="chatbot-container">
+    <h1>AI Progress Chatbot</h1>
+    <div id="chatbox">
+      <div class="message system-message">
+        <p> Hello! I'm here to answer questions about the patient's progress. </p>
+        <p> You can ask me things like, "What does the range of motion data mean?" </p>
+        <p> </p>
+      </div>
+    </div>
+    <div class="chat-input-container">
+      <input type="text" id="chat-input" placeholder="Ask a question...">
+      <button id="chat-send-btn">Send</button>
+    </div>
+  </div>
+  `;
+
+  const setup = () => {
+    let hasGreeted = false;
+
+    const outputDiv = document.getElementById("ai-analysis-output");
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const outliersBtn = document.getElementById("outliers-btn");
+    const chatInput = document.getElementById("chat-input");
+    const chatSendBtn = document.getElementById("chat-send-btn");
+    const chatbox = document.getElementById("chatbox");
+
+    function addMessageToChatbox(text, sender) {
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("message");
+      messageDiv.classList.add(sender === "user" ? "user-message" : "system-message");
+      messageDiv.textContent = text;
+      chatbox.appendChild(messageDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
     }
-});
 
+    analyzeBtn.addEventListener("click", async () => {
+      outputDiv.textContent = "Analyzing data with AI...";
+      try {
+        const response = await fetch('http://localhost:3000/analyze-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: patientData })
+        });
+        if (!response.ok) throw new Error('Server response was not ok');
+        const result = await response.json();
+        outputDiv.textContent = result.analysis;
+      } catch (e) {
+        outputDiv.textContent = "There was an error analyzing the data.";
+        console.error("Fetch error:", e);
+      }
+    });
+
+    outliersBtn.addEventListener("click", async () => {
+      outputDiv.textContent = "Analyzing data for outliers...";
+      try {
+        const response = await fetch('http://localhost:3000/analyze-outliers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: patientData })
+        });
+        if (!response.ok) throw new Error('Server response was not ok');
+        const result = await response.json();
+        if (result.analysis.summary) {
+          let html = `<h3>${result.analysis.summary}</h3>`;
+          if (result.analysis.outliers && result.analysis.outliers.length > 0) {
+            html += "<h2>Outliers Found:</h2><ul>";
+            result.analysis.outliers.forEach(outlier => {
+              html += `<li><strong>Session ${outlier.session}</strong>: An unusual ${outlier.metric} was detected. Reason: ${outlier.reason}</li>`;
+            });
+            html += "</ul>";
+          } else {
+            html += "<p>No significant outliers were detected.</p>";
+          }
+          outputDiv.innerHTML = html;
+        } else {
+          outputDiv.textContent = JSON.stringify(result.analysis, null, 2);
+        }
+      } catch (e) {
+        outputDiv.textContent = "There was an error analyzing the data for outliers.";
+        console.error("Fetch error:", e);
+      }
+    });
+
+    chatSendBtn.addEventListener("click", async () => {
+      const userMessage = chatInput.value.trim();
+      if (userMessage === "") return;
+      if (!hasGreeted) {
+        chatbox.innerHTML = "";
+        hasGreeted = true;
+      }
+      addMessageToChatbox(userMessage, "user");
+      chatInput.value = "";
+      try {
+        addMessageToChatbox("Typing...", "system");
+        const response = await fetch('http://localhost:3000/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: userMessage, data: patientData })
+        });
+        const result = await response.json();
+        chatbox.removeChild(chatbox.lastChild);
+        addMessageToChatbox(result.response, "system");
+      } catch (e) {
+        chatbox.removeChild(chatbox.lastChild);
+        addMessageToChatbox("Sorry, I could not process that request.", "system");
+        console.error("Chatbot error:", e);
+      }
+    });
+
+    chatInput.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        chatSendBtn.click();
+      }
+    });
+  };
+  return { html, setup };
+}

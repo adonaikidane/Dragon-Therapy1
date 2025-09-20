@@ -502,11 +502,3 @@ window.initInjuryGame = function () {
   gameActive = true;
   requestAnimationFrame(gameLoop);
 };
-
-// ---------------- IMPORTANT ----------------
-// Remove the old auto-start lines that were at the bottom:
-//   setupLevel(level);
-//   requestAnimationFrame(gameLoop);
-//
-// The game now starts when your Dashboard calls:
-//   if (typeof window.initInjuryGame === 'function') window.initInjuryGame();
