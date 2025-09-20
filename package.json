@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@auth0/auth0-spa-js": "^2.4.1"
+  },
+  "name": "dragon-therapy1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ushrestha8/Dragon-Therapy1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ushrestha8/Dragon-Therapy1/issues"
+  },
+  "homepage": "https://github.com/ushrestha8/Dragon-Therapy1#readme"
+}
