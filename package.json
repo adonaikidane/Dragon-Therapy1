@@ -1,12 +1,5 @@
 {
   "dependencies": {
-<<<<<<< HEAD
-    "@google/generative-ai": "^0.24.1",
-    "cors": "^2.8.5",
-    "express": "^5.1.0"
-  }
-}
-=======
     "@google/genai": "^1.20.0",
     "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.5",
@@ -15,4 +8,3 @@
   },
   "type": "module"
 }
->>>>>>> 39458f690722fb663e802d555324594c8b930c93
