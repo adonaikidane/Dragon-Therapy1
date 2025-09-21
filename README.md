@@ -2,7 +2,7 @@ My Contributions
 
 My primary responsibilities included:
 
-Integrating the Google Gemini API to power the core chat functionality.
+building the primary gameplay module and comprehensive results dashboard
 
 Designing and implementing the updated graph and chatbox UI/UX.
 
