@@ -1,4 +1,8 @@
 // Data and Storage
+const API_BASE_URL = window.location.hostname.includes('localhost')
+  ? 'http://localhost:3000'
+  : 'https://gemini-backend-api.onrender.com';
+
 const JOURNAL_KEY = 'irt:journal';
 const SESS_KEY = 'irt:sessions';
 const patientData = [
@@ -388,7 +392,7 @@ function AI_InsightsPage() {
     analyzeBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data with AI...";
       try {
-        const response = await fetch('https://gemini-backend-api.onrender.com/analyze-data', {
+          const response = await fetch(`${API_BASE_URL}/analyze-data`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -405,7 +409,7 @@ function AI_InsightsPage() {
     outliersBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data for outliers...";
       try {
-        const response = await fetch('https://gemini-backend-api.onrender.com/analyze-outliers', {
+        const response = await fetch(`${API_BASE_URL}/analyze-outliers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -475,7 +479,7 @@ function initFloatingChatbot() {
 
     try {
       addMessageToChatbox("Typing...", "system");
-      const response = await fetch('https://gemini-backend-api.onrender.com/chatbot', {
+        const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage, data: patientData })
