@@ -11,19 +11,6 @@
   --warn: #f39c12;
 }
 
-/* Dark theme variables */
-body.dark-theme {
-  --bg: #0b1020;
-  --panel: #111834;
-  --text: #e5e7eb;
-  --muted: #9aa3b2;
-  --accent: #4f46e5;
-  --card: #0f172a;
-  --line: #223058;
-  --ok: #16a34a;
-  --warn: #f59e0b;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -41,12 +28,36 @@ body {
 }
 
 /* ------------------- Theme Specific Backgrounds ------------------- */
+body.dark-theme {
+  --bg: #0b1020;
+  --panel: #111834;
+  --text: #e5e7eb;
+  --muted: #9aa3b2;
+  --accent: #4f46e5;
+  --card: #0f172a;
+  --line: #223058;
+  --ok: #16a34a;
+  --warn: #f59e0b;
+  background: linear-gradient(180deg, #0b1020, #0d1734);
+}
+
 body.light-theme {
   background: linear-gradient(rgb(247, 221, 248), rgb(244, 221, 165), rgb(252, 210, 144));
 }
 
-body.dark-theme {
-    background: linear-gradient(180deg, #0b1020, #0d1734);
+.theme-container {
+    margin-left: auto;
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#theme-icon {
+    width: 30px;
+    height: 30px;
 }
 
 /* ------------------- Navbar & Header ------------------- */
@@ -86,21 +97,6 @@ body.dark-theme {
 
 .topbar .nav a:hover {
   color: var(--text);
-}
-
-.theme-container {
-    margin-left: auto;
-}
-
-#theme-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-#theme-icon {
-    width: 30px;
-    height: 30px;
 }
 
 /* ------------------- Main Layout & Components ------------------- */
@@ -296,7 +292,7 @@ canvas#game-canvas {
 }
 
 .cal-cell.has-entry {
-  outline: 2px solid var(--ok);
+  outline: 2px solid #4ade80;
 }
 
 .cal-cell.today {
@@ -416,19 +412,11 @@ button:hover {
 }
 
 /* ------------------- Floating Chatbot Styles ------------------- */
-/* The main container for the chatbot */
-#floating-chatbot-container {
+/* The chatbot toggle button */
+#chat-toggle-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* This aligns the toggle button to the right */
-}
-
-/* The chatbot toggle button */
-#chat-toggle-btn {
     width: 60px;
     height: 60px;
     background: var(--accent);
@@ -442,26 +430,24 @@ button:hover {
     transition: transform 0.2s ease-in-out;
     border: none;
     padding: 0;
-    z-index: 1001; /* Ensure button is above the chat window */
+    z-index: 1000;
 }
 
 #chat-toggle-btn:hover {
     transform: scale(1.1);
 }
 
-#chat-toggle-btn svg {
-    color: currentColor;
-    width: 32px;
-    height: 32px;
-}
-
 /* The chatbot window */
-#chat-window {
+#floating-chatbot-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
     width: 350px;
     height: 450px;
     background: var(--card);
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    z-index: 999;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -471,19 +457,19 @@ button:hover {
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
 }
 
-#chat-window.is-visible {
+#floating-chatbot-container.is-visible {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
 #chatbox {
-    flex-grow: 1; /* Allows it to fill the available space */
+    flex-grow: 1;
     padding: 15px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* Allows scrolling for long chat history */
-    gap: 10px; /* Add spacing between messages */
+    overflow-y: auto;
+    gap: 10px;
 }
 
 .message {
@@ -503,7 +489,6 @@ button:hover {
 .system-message {
     background-color: var(--panel);
     color: var(--text);
-    /* Corrected: "flex-center" is not a valid align-self value */
     align-self: flex-start;
     border-bottom-left-radius: 4px;
 }

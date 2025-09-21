@@ -451,10 +451,6 @@ function initFloatingChatbot() {
     const chatInput = document.getElementById('chat-input');
     const chatSendBtn = document.getElementById('chat-send-btn');
     const chatbox = document.getElementById('chatbox');
-
-    // If core elements don't exist, don't initialize the chatbot.
-    if (!chatToggleBtn || !chatbotContainer || !chatInput || !chatSendBtn || !chatbox) return;
-
     let hasGreeted = false;
 
     // Chatbot toggle logic
@@ -464,47 +460,46 @@ function initFloatingChatbot() {
 
     // Helper function to add messages to the chatbox
     function addMessageToChatbox(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
-        messageDiv.classList.add(sender === 'user' ? 'user-message' : 'system-message');
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.classList.add(sender === "user" ? "user-message" : "system-message");
         messageDiv.textContent = text;
         chatbox.appendChild(messageDiv);
         chatbox.scrollTop = chatbox.scrollHeight;
     }
-
     // Chatbot send message logic
-    chatSendBtn.addEventListener('click', async () => {
+    chatSendBtn.addEventListener("click", async () => {
         const userMessage = chatInput.value.trim();
-        if (userMessage === '') return;
+        if (userMessage === "") return;
 
         if (!hasGreeted) {
-            chatbox.innerHTML = '';
+            chatbox.innerHTML = "";
             hasGreeted = true;
         }
 
-        addMessageToChatbox(userMessage, 'user');
-        chatInput.value = '';
+        addMessageToChatbox(userMessage, "user");
+        chatInput.value = "";
 
         try {
-            addMessageToChatbox('Typing...', 'system');
+            addMessageToChatbox("Typing...", "system");
             const response = await fetch(`${API_BASE_URL}/chatbot`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: userMessage, data: patientData })
             });
+
             const result = await response.json();
-            // Remove the 'Typing...' system message
-            if (chatbox.lastChild) chatbox.removeChild(chatbox.lastChild);
-            addMessageToChatbox(result.response || 'No response', 'system');
+            chatbox.removeChild(chatbox.lastChild);
+            addMessageToChatbox(result.response, "system");
         } catch (e) {
-            if (chatbox.lastChild) chatbox.removeChild(chatbox.lastChild);
-            addMessageToChatbox('Sorry, I could not process that request.', 'system');
-            console.error('Chatbot error:', e);
+            chatbox.removeChild(chatbox.lastChild);
+            addMessageToChatbox("Sorry, I could not process that request.", "system");
+            console.error("Chatbot error:", e);
         }
     });
 
-    chatInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
+    chatInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
             chatSendBtn.click();
         }
     });
