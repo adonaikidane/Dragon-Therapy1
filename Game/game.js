@@ -456,6 +456,12 @@ function showStats() {
       Range of Motion: <b>${range} zones</b>
     `;
   }
+  window.gameData.history.push({
+    level: level,
+    speed: parseFloat(speedAvg),
+    accuracy: acc,
+    rangeOfMotion: range
+  });
 }
 
 function giveReward() {
