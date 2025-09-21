@@ -1,29 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>🐲Dragon Recovery</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
   <link rel="stylesheet" href="./app.css" />
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
-<body>
+<body class="dark-theme">
   <header class="topbar">
     <div class="brand">🐲Dragon Therapy</div>
     <nav class="nav">
       <a href="#/dashboard">Dashboard</a>
       <a href="#/calendar">Calendar</a>
       <a href="#/results">Results</a>
-      <a href="#/ai-insights">AI Insights</a>
     </nav>
     <div class="theme-container">
         <button id="theme-toggle" aria-label="Toggle dark/light theme">
-            <img id="theme-icon" src="./img/brightness-and-contrast.png" alt="Light theme">
+            <img id="theme-icon" src="./img/mode.png" alt="Dark theme">
         </button>
     </div>
-
-
   </header>
 
   <main id="app"></main>
@@ -58,6 +57,6 @@
   <!-- <script src="./game/game.js"></script> -->
   <script type="module" src="./app.js"></script>
 
-<script src="theme-toggle.js"></script>
 </body>
 </html>
+
