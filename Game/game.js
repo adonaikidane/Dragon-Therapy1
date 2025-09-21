@@ -8,7 +8,7 @@ window.initInjuryGame = function () {
     const ctx = canvas.getContext('2d');
     const levelInfo = document.getElementById('level-info');
     const rewardInfo = document.getElementById('reward-info');
-    const nextLevelBtn = document.getElementById('next-level-btn');
+    let nextLevelBtn = document.getElementById('next-level-btn');
     const statsDiv = document.getElementById('stats');
 
     // --- Game Variables ---
@@ -78,7 +78,7 @@ window.initInjuryGame = function () {
     // --- Game Flow ---
     function startLevel() {
         levelInfo.textContent = `Level: ${currentLevel} of ${MAX_LEVELS}`;
-        if(nextLevelBtn) nextLevelBtn.style.display = 'none';
+        if(nextLevelBtn) nextLevelBtn=document.getElementById('next-level-btn');
         if(statsDiv) statsDiv.innerHTML = '';
         if (rewardInfo) { rewardInfo.textContent = supportiveMessages[(currentLevel - 1) % supportiveMessages.length]; }
         
@@ -124,7 +124,7 @@ window.initInjuryGame = function () {
             gameActive = false;
             showLevelStats();
             if (currentLevel < MAX_LEVELS) {
-                if(nextLevelBtn) nextLevelBtn.style.display = "inline-block";
+                if (nextLevelBtn) nextLevelBtn.style.display = currentLevel < MAX_LEVELS ? 'inline-block' : 'none';
             } else {
                 finishSession();
             }
@@ -132,11 +132,11 @@ window.initInjuryGame = function () {
     }
 
     if(nextLevelBtn) {
-        nextLevelBtn.addEventListener('click', () => {
-            currentLevel++;
-            startLevel();
-            requestAnimationFrame(gameLoop);
-        });
+        nextLevelBtn.onclick = () => {
+        currentLevel++;
+        startLevel(); // resets the next level
+        requestAnimationFrame(gameLoop);
+    };
     }
 
     function finishSession() {
@@ -301,3 +301,4 @@ window.initInjuryGame = function () {
     startLevel();
     requestAnimationFrame(gameLoop);
 };
+
