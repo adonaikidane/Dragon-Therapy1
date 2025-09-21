@@ -1,7 +1,16 @@
 // Data and Storage
 const JOURNAL_KEY = 'irt:journal';
 const SESS_KEY = 'irt:sessions';
-
+const patientData = [
+  { session: 1, avgTime: 3.5, errors: 7, range: 4 },
+  { session: 2, avgTime: 3.1, errors: 5, range: 5 },
+  { session: 3, avgTime: 2.8, errors: 4, range: 6 },
+  { session: 4, avgTime: 2.5, errors: 3, range: 7 },
+  { session: 5, avgTime: 2.3, errors: 2, range: 8 },
+  { session: 6, avgTime: 2.1, errors: 1, range: 9 },
+  { session: 7, avgTime: 2.0, errors: 1, range: 9 },
+  { session: 8, avgTime: 1.9, errors: 0, range: 10 }
+];
 
 function loadJournal() { return JSON.parse(localStorage.getItem(JOURNAL_KEY) || '{}'); }
 function saveJournal(j) { localStorage.setItem(JOURNAL_KEY, JSON.stringify(j)); }
