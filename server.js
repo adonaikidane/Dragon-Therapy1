@@ -10,7 +10,10 @@ const port = process.env.PORT || 3001;
 
 // Configure CORS to accept requests from your GitHub Pages URL
 const corsOptions = {
-  origin: 'https://kami1230.github.io',
+  origin: [
+    'https://kami1230.github.io',
+    'http://localhost:3000'
+  ],
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
