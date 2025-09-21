@@ -386,7 +386,6 @@ hr.sep {
   margin: 12px 0;
 }
 
-
 /* Light Theme Input Overrides */
 body.light-theme .input,
 body.light-theme select,
@@ -524,7 +523,6 @@ button:hover {
     border: none;
     padding: 0;
 }
-
 #chat-toggle-btn.is-hidden {
     opacity: 0;
     pointer-events: none; /* Prevents button from being clickable when hidden */
