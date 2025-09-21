@@ -183,6 +183,18 @@ body.dark-theme{
 .theme-container{
     margin-left: auto;
 }
+/* Light theme styles */
+body.light-theme .calendar {
+  background-color: #8c3535;  /* Example: light background */
+  color: #fbf4f4;  /* Dark text for light mode */
+}
+
+/* Dark theme styles */
+body.dark-theme .calendar {
+  background-color: #333;  /* Example: dark background */
+  color: #fff;  /* Light text for dark mode */
+}
+
 
 /* ------------------- CANVAS ------------------- */
 .canvas-wrap {

@@ -211,7 +211,6 @@ function ResultsPage() {
     <section class="panel">
       <div class="row" style="justify-content:space-between;">
         <div><h1>Results</h1><p>Summary of your check-ins${sessions.length ? ' and recent game sessions' : ''}.</p></div>
-        <a class="btn secondary" href="#/dashboard">Dashboard</a>
       </div>
 
       <div class="grid grid-3" style="margin-top:12px">
@@ -249,6 +248,18 @@ function ResultsPage() {
             </tbody>
           </table>
         ` : '<p>No sessions yet.</p>'}
+      </div>
+    <!--display the most recent session if available-->
+    <div class="card" style="margin-top:16px">
+        <h2> Last Game Session Summary</h2>
+        ${last ? `
+          <p><strong>Date:</strong> ${last.date}</p>
+          <p><strong>Level:</strong> ${last.level}</p>
+          <p><strong>Average Speed (s):</strong> ${last.metrics.avgSpeedSec.toFixed(2)}</p>
+          <p><strong>Errors:</strong> ${last.metrics.errors}</p>
+          <p><strong> Range of Motion (ROM) Zones:</strong> ${last.metrics.romZones}</p>
+          <p><strong>Recovery Index (RI):</strong> ${Math.round(last.recoveryIndex * 100)}</p>
+        ` : '<p>No recent game session data available.</p>'}
       </div>
     </section>
   `;
@@ -529,3 +540,8 @@ window.addEventListener('load', () => {
   initFloatingChatbot();
   setupThemeToggle();
 });
+    updateCalendarColor();
+
+
+
+
