@@ -1,4 +1,8 @@
 // Data and Storage
+const API_BASE_URL = window.location.hostname.includes('localhost')
+  ? 'http://localhost:3000'
+  : 'https://gemini-backend-api.onrender.com';
+
 const JOURNAL_KEY = 'irt:journal';
 const SESS_KEY = 'irt:sessions';
 const patientData = [
@@ -419,7 +423,28 @@ if (toggleButton && themeIcon) {
     }
   });
 }
-
+/*
+function processPatientData() {
+    // Check if the global variable exists and has data
+    if (window.gameData && window.gameData.history.length > 0) {
+        // Retrieve the data from the last completed level
+        const patientData = window.gameData.history[window.gameData.history.length - 1];
+        
+        console.log("Patient Data for the last round:");
+        console.log(`Level: ${patientData.level}`);
+        console.log(`Average Speed: ${patientData.speed}s`);
+        console.log(`Misses/Errors: ${patientData.accuracy}`);
+        console.log(`Range of Motion: ${patientData.rangeOfMotion} zones`);
+        
+        // You can now use this data for your AI model or other processing
+        // For example:
+        // sendDataToAI(patientData); 
+        // updateDashboard(patientData);
+    } else {
+        console.log("No game data available yet.");
+    }
+}
+*/
 // AI Insights Page (separate from chatbot)
 function AI_InsightsPage() {
   const html = `
@@ -440,7 +465,7 @@ function AI_InsightsPage() {
     analyzeBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data with AI...";
       try {
-        const response = await fetch('http://localhost:3000/analyze-data', {
+          const response = await fetch(`${API_BASE_URL}/analyze-data`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -457,7 +482,7 @@ function AI_InsightsPage() {
     outliersBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data for outliers...";
       try {
-        const response = await fetch('http://localhost:3000/analyze-outliers', {
+        const response = await fetch(`${API_BASE_URL}/analyze-outliers`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -527,7 +552,7 @@ function initFloatingChatbot() {
 
     try {
       addMessageToChatbox("Typing...", "system");
-      const response = await fetch('http://localhost:3000/chatbot', {
+        const response = await fetch(`${API_BASE_URL}/chatbot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage, data: patientData })
