@@ -1,4 +1,4 @@
-// Data and Storage
+
 const API_BASE_URL = window.location.hostname.includes('localhost')
   ? 'http://localhost:3000'
   : 'https://gemini-backend-api.onrender.com';
@@ -24,13 +24,14 @@ function saveSession(s) {
   arr.push(s);
   localStorage.setItem(SESS_KEY, JSON.stringify(arr));
 }
-
 function loadSessions(limit = 50) {
   const arr = JSON.parse(localStorage.getItem(SESS_KEY) || '[]');
   return arr.slice(-limit);
 }
 
-// Router
+// -----------------------------------------------------------------------------
+// Router (Switches between your pages: Dashboard, Calendar, Results)
+// -----------------------------------------------------------------------------
 const app = document.getElementById('app');
 
 function router() {
@@ -46,7 +47,8 @@ function router() {
     page = AI_InsightsPage();
   } else if (route.startsWith('/dragon-game')) {
     DragonGamePage();
-  } else if (route.startsWith('/add-game')) {
+  }
+  else if (route.startsWith('/add-game')) {
     AddmoreGame();
   }
   else {
@@ -60,15 +62,7 @@ function router() {
   } else if (page) {
     // For legacy pages that handle their own rendering
   }
-
-  if (page && typeof page.html === 'string' && typeof page.setup === 'function') {
-    app.innerHTML = page.html;
-    page.setup();
-  } else if (page) {
-    // For legacy pages that handle their own rendering
-  }
 }
-
 window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 
@@ -302,19 +296,19 @@ function processPatientData() {
         console.log("No game data available yet.");
     }
 }
-
 */
+
 // AI Insights Page (separate from chatbot)
 function AI_InsightsPage() {
   const html = `
-    <section class="panel">
-      <h1>AI Insights: Correlations in Patient Activity</h1>
-      <div class="button-row">
-        <button id="analyze-btn">Analyze Data for Correlations</button>
-        <button id="outliers-btn">Analyze Data for Outliers</button>
-      </div>
-      <div id="ai-analysis-output"></div>
-    </section>
+  <section class="panel">
+    <h1>AI Insights: Correlations in Patient Activity</h1>
+    <div class="button-row">
+      <button id="analyze-btn">Analyze Data for Correlations</button>
+      <button id="outliers-btn">Analyze Data for Outliers</button>
+    </div>
+    <div id="ai-analysis-output"></div>
+  </section>
   `;
 
   const setup = () => {
@@ -324,7 +318,7 @@ function AI_InsightsPage() {
     analyzeBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data with AI...";
       try {
-          const response = await fetch(`${API_BASE_URL}/analyze-data`, {
+        const response = await fetch(`${API_BASE_URL}/analyze-data`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -411,7 +405,7 @@ function initFloatingChatbot() {
 
     try {
       addMessageToChatbox("Typing...", "system");
-        const response = await fetch(`${API_BASE_URL}/chatbot`, {
+      const response = await fetch(`${API_BASE_URL}/chatbot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage, data: patientData })
