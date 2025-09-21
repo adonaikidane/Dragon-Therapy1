@@ -1,3 +1,121 @@
+    // 3. Save the updated array back to localStorage
+    localStorage.setItem('levelHistory', JSON.stringify(levelHistory));
+}
+
+
+function giveReward() {
+  currentReward = rewards[Math.min(level-1, rewards.length-1)];
+  if (rewardInfo) rewardInfo.textContent = "Reward: " + currentReward;
+}
+
+// ---------------- One-time DOM binding ----------------
+let _listenersBound = false;
+function bindDomOnce() {
+  if (_listenersBound) return;
+  canvas.addEventListener('mousedown', startDrag);
+  canvas.addEventListener('touchstart', startDrag, {passive:false});
+  canvas.addEventListener('mousemove', dragOrb);
+  canvas.addEventListener('touchmove', dragOrb, {passive:false});
+  canvas.addEventListener('mouseup', endDrag);
+  canvas.addEventListener('touchend', endDrag);
+  if (nextLevelBtn) {
+    nextLevelBtn.addEventListener('click', () => {
+      if (level < MAX_LEVEL) {
+        level++;
+        setupLevel(level);
+        requestAnimationFrame(gameLoop);
+      }
+    });
+  }
+  _listenersBound = true;
+}
+
+// ---------------- Game Initialization ----------------
+// This code will run automatically when the page loads.
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Look up DOM elements
+    canvas = document.getElementById('game-canvas');
+    levelInfo = document.getElementById('level-info');
+    rewardInfo = document.getElementById('reward-info');
+    nextLevelBtn = document.getElementById('next-level-btn');
+    statsDiv = document.getElementById('stats');
+    ctx = canvas.getContext('2d');
+
+    // Center dragon based on canvas size
+    dragon.x = canvas.width / 2;
+    dragon.y = canvas.height / 2;
+
+    // Bind inputs and start the game
+    bindDomOnce();
+    setupLevel(level);
+    gameActive = true;
+    requestAnimationFrame(gameLoop);
+
+    // --- ADD THIS to make the dashboard button work ---
+    const viewDashboardBtn = document.getElementById('view-dashboard-btn');
+    if (viewDashboardBtn) {
+        viewDashboardBtn.addEventListener('click', () => {
+            window.location.href = 'results.html';
+        });
+    }
+});
+  // Look up DOM every time in case the Dashboard re-rendered
+  canvas = document.getElementById('game-canvas');
+  levelInfo = document.getElementById('level-info');
+  rewardInfo = document.getElementById('reward-info');
+  nextLevelBtn = document.getElementById('next-level-btn');
+  statsDiv = document.getElementById('stats');
+
+  if (!canvas) {
+    console.error('Game canvas not found. Ensure #game-canvas exists on the Dashboard.');
+    return;
+  }
+  ctx = canvas.getContext('2d');
+
+  // Center dragon based on current canvas size
+  dragon.x = canvas.width / 2;
+  dragon.y = canvas.height / 2;
+
+  // Optional: respect preset start level
+  if (typeof window.__IRT_START_LEVEL === 'number') {
+    level = Math.max(1, Math.min(10, window.__IRT_START_LEVEL));
+  } else {
+    level = 1;
+  }
+
+  // Bind inputs once, then (re)start the game
+  bindDomOnce();
+  setupLevel(level);
+  gameActive = true;
+  requestAnimationFrame(gameLoop);
+;
+
+// ---------------- IMPORTANT ----------------
+// Remove the old auto-start lines that were at the bottom:
+//   setupLevel(level);
+//   requestAnimationFrame(gameLoop);
+//
+// The game now starts when your Dashboard calls:
+//   if (typeof window.initInjuryGame === 'function') window.initInjuryGame();
+*/
+
+// This is the complete, merged game file.
+// It includes all your advanced features and is correctly structured to work with app.js.
+
+// This is the complete, final game file.
+// It includes all your advanced features and all the bug fixes.
+
+// This is the complete, final game file.
+// It includes all features and bug fixes, plus numbered orbs and supportive messages.
+
+// This is the complete, final game file.
+// It includes all features and bug fixes, plus the latest requests.
+
+// This is the complete, final, and fully correct game file.
+
+// This is the complete, final, and fully correct game file.
+
 window.initInjuryGame = function () {
     const canvas = document.getElementById('game-canvas');
     if (!canvas) {
@@ -8,7 +126,7 @@ window.initInjuryGame = function () {
     const ctx = canvas.getContext('2d');
     const levelInfo = document.getElementById('level-info');
     const rewardInfo = document.getElementById('reward-info');
-    let nextLevelBtn = document.getElementById('next-level-btn');
+    const nextLevelBtn = document.getElementById('next-level-btn');
     const statsDiv = document.getElementById('stats');
 
     // --- Game Variables ---
@@ -29,7 +147,7 @@ window.initInjuryGame = function () {
     let levelStats = {};
     
     let gameActive = false;
-    // Variable to track current collision state for accurate error counting
+    // ADJUSTMENT: Variable to track current collision state
     let isColliding = false; 
 
     // --- Helper Functions ---
@@ -78,7 +196,7 @@ window.initInjuryGame = function () {
     // --- Game Flow ---
     function startLevel() {
         levelInfo.textContent = `Level: ${currentLevel} of ${MAX_LEVELS}`;
-        if(nextLevelBtn) nextLevelBtn=document.getElementById('next-level-btn');
+        if(nextLevelBtn) nextLevelBtn.style.display = 'none';
         if(statsDiv) statsDiv.innerHTML = '';
         if (rewardInfo) { rewardInfo.textContent = supportiveMessages[(currentLevel - 1) % supportiveMessages.length]; }
         
@@ -124,7 +242,7 @@ window.initInjuryGame = function () {
             gameActive = false;
             showLevelStats();
             if (currentLevel < MAX_LEVELS) {
-                if (nextLevelBtn) nextLevelBtn.style.display = currentLevel < MAX_LEVELS ? 'inline-block' : 'none';
+                if(nextLevelBtn) nextLevelBtn.style.display = "inline-block";
             } else {
                 finishSession();
             }
@@ -132,11 +250,11 @@ window.initInjuryGame = function () {
     }
 
     if(nextLevelBtn) {
-        nextLevelBtn.onclick = () => {
-        currentLevel++;
-        startLevel(); // resets the next level
-        requestAnimationFrame(gameLoop);
-    };
+        nextLevelBtn.addEventListener('click', () => {
+            currentLevel++;
+            startLevel();
+            requestAnimationFrame(gameLoop);
+        });
     }
 
     function finishSession() {
@@ -195,17 +313,21 @@ window.initInjuryGame = function () {
                 ctx.fillStyle = '#fff';
                 ctx.fill();
                 
+                // ... (inside drawGame, within the orb drawing loop)
                 if (currentLevel >= 3) {
-                    const label = String(orb.id + 1);
-                    ctx.font = `bold ${Math.round(orb.radius * 0.8)}px Arial`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    // Draw a crisp outline for visibility
-                    ctx.strokeStyle = 'white';
-                    ctx.lineWidth = 3;
-                    ctx.strokeText(label, orb.x, orb.y);
-                    ctx.fillStyle = 'black';
-                    ctx.fillText(label, orb.x, orb.y);
+                const label = String(orb.id + 1);
+                ctx.font = `bold ${Math.round(orb.radius * 0.8)}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // --- New Outline Logic ---
+                ctx.strokeStyle = 'black'; // The color of the outline
+                ctx.lineWidth = 3;         // How thick the outline is
+                ctx.strokeText(label, orb.x, orb.y); // Draw the outline
+
+                // Shadow lines removed
+                ctx.fillStyle = 'black';
+                ctx.fillText(label, orb.x, orb.y);
                 }
                 ctx.restore();
             }
@@ -226,7 +348,7 @@ window.initInjuryGame = function () {
         let orb = orbs.find(o => !o.fed && dist(pos, o) <= o.radius);
         if (orb) {
             draggingOrb = orb;
-            isColliding = false; // Reset the flag on new drag
+            isColliding = false; // ADJUSTMENT: Reset the flag on new drag
             dragOffset.x = pos.x - orb.x;
             dragOffset.y = pos.y - orb.y;
             orb.startTime = Date.now();
@@ -243,12 +365,15 @@ window.initInjuryGame = function () {
             const currentlyColliding = collidesWithObstacle(newX, newY, draggingOrb.radius);
     
             if (currentlyColliding) {
+                // If we are colliding now but weren't before, count an error
                 if (!isColliding) {
                     sessionData.totalMisses++;
                     levelStats.accuracy++;
-                    isColliding = true; 
+                    isColliding = true; // Set the flag to prevent multiple counts
                 }
+                // NOTE: We don't update the orb's position if colliding
             } else {
+                // If not colliding, update the orb's position and reset the flag
                 draggingOrb.x = newX;
                 draggingOrb.y = newY;
                 isColliding = false;
@@ -302,3 +427,4 @@ window.initInjuryGame = function () {
     requestAnimationFrame(gameLoop);
 };
 
+// my adjusted code
