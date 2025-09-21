@@ -44,7 +44,17 @@ function router() {
     page = ResultsPage();
   } else if (route.startsWith('/ai-insights')) {
     page = AI_InsightsPage();
-  } else {
+  } else if (route.startsWith('/dragon-game')) {
+    DragonGamePage();
+  }else if (route.startsWith('/bird-game')) {
+    BirdGamePage();
+  }else if (route.startsWith('/monster-game')) {
+    MonsterGamePage();
+  }
+  else if (route.startsWith('/add-game')) {
+    AddmoreGame();
+  }
+  else {
     app.innerHTML = `<section class="panel"><h1>Not Found</h1></section>`;
     return;
   }
@@ -62,36 +72,64 @@ window.addEventListener('load', router);
 
 // Pages
 function DashboardPage() {
-  app.innerHTML = `
-    <section class="panel">
-      <div class="row" style="justify-content:space-between; align-items:center;">
-        <div><h1>Dashboard</h1><p>Play the game here. Use the Calendar tab to log wellbeing.</p></div>
-        <div class="row" style="gap:8px">
-          <a class="btn secondary" href="#/calendar">Calendar</a>
-          <a class="btn secondary" href="#/results">Results</a>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
+    app.innerHTML = `
+      <section class="panel">
         <div class="row" style="justify-content:space-between; align-items:center;">
-          <div class="row" style="gap:8px;">
-            <h2 style="margin:0">Game</h2>
-            <span class="badge">Live</span>
-          </div>
-          <button class="btn secondary" id="reset-game">Reset</button>
+          <div><h1>Dashboard</h1><p>Select a game to play.</p></div>
         </div>
 
-        <div class="canvas-wrap" style="margin-top:8px">
-          <!-- IDs expected by game.js -->
-          <div id="level-info"></div>
-          <div id="reward-info"></div>
-          <canvas id="game-canvas" width="960" height="420"></canvas>
-          <button id="next-level-btn" class="btn">Next Level</button>
-          <div id="stats"></div>
+        <div class="card" style="margin-top:12px">
+          <h2>Game Selection</h2>
+          <div class="game-selection-grid">
+          <div class="game-selection-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; padding: 20px;">
+            <a href="#/dragon-game" class="game-icon-card">
+              <img src="./img/dragon.jpg" alt="Dragon Game" style="width: 100px; height: 100px;">
+              <h3>Dragon Game</h3>
+            </a>
+            <a href="#/bird-game" class="game-icon-card">
+              <img src="./img/bird.png" alt="Bird Game" style="width: 100px; height: 100px;">
+              <h3>Bird Game</h3>
+            </a>
+            <a href="#/monster-game" class="game-icon-card">
+              <img src="./img/Monster.jpg" alt="Monster Game" style="width: 100px; height: 100px;">
+              <h3>Monster Game</h3>
+            </a>
+            <a href="#/add-game" class="game-icon-card">
+              <img src="./img/add.png" alt="Add more Game" style="width: 100px; height: 100px;">
+              <h3>Add More</h3>
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
-  `;
+      </section>
+    `;
+    // No game initialization here, as the user needs to select one.
+}
+
+function DragonGamePage() {
+  app.innerHTML = `
+      <section class="panel">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <div><h1>Dragon Game</h1><p>Control the dragon to hit the targets.</p></div>
+          <a class="btn secondary" href="#/dashboard">Back to Dashboard</a>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="row" style="justify-content:space-between; align-items:center;">
+            <div class="row" style="gap:8px;">
+              <h2 style="margin:0">Game</h2>
+              <span class="badge">Live</span>
+            </div>
+            <button class="btn secondary" id="reset-game">Reset</button>
+          </div>
+          <div class="canvas-wrap" style="margin-top:8px">
+            <div id="level-info"></div>
+            <div id="reward-info"></div>
+            <canvas id="game-canvas" width="960" height="420"></canvas>
+            <button id="next-level-btn" class="btn">Next Level</button>
+            <div id="stats"></div>
+          </div>
+        </div>
+      </section>
+    `;
   // Init game AFTER DOM is present
   if (typeof window.initInjuryGame === 'function') {
     window.initInjuryGame();
@@ -121,7 +159,6 @@ function DashboardPage() {
   });
 }
 
-
 function CalendarPage() {
   const today = ymd(new Date());
   const j = loadJournal();
@@ -130,7 +167,7 @@ function CalendarPage() {
   app.innerHTML = `
     <section class="panel">
       <div class="row" style="justify-content:space-between; align-items:center;">
-        <div><h1>Calendar</h1><p>Track mood, wellbeing and pain daily.</p></div>
+        <div><h1>Calendar</h1><p>Track mood, wellbeing, and pain daily.</p></div>
         <a class="btn secondary" href="#/dashboard">Back to Game</a>
       </div>
 
@@ -215,7 +252,6 @@ function ResultsPage() {
     <section class="panel">
       <div class="row" style="justify-content:space-between;">
         <div><h1>Results</h1><p>Summary of your check-ins${sessions.length ? ' and recent game sessions' : ''}.</p></div>
-        <a class="btn secondary" href="#/dashboard">Dashboard</a>
       </div>
 
       <div class="grid grid-3" style="margin-top:12px">
@@ -254,6 +290,18 @@ function ResultsPage() {
           </table>
         ` : '<p>No sessions yet.</p>'}
       </div>
+    <!--display the most recent session if available-->
+    <div class="card" style="margin-top:16px">
+        <h2> Last Game Session Summary</h2>
+        ${last ? `
+          <p><strong>Date:</strong> ${last.date}</p>
+          <p><strong>Level:</strong> ${last.level}</p>
+          <p><strong>Average Speed (s):</strong> ${last.metrics.avgSpeedSec.toFixed(2)}</p>
+          <p><strong>Errors:</strong> ${last.metrics.errors}</p>
+          <p><strong> Range of Motion (ROM) Zones:</strong> ${last.metrics.romZones}</p>
+          <p><strong>Recovery Index (RI):</strong> ${Math.round(last.recoveryIndex * 100)}</p>
+        ` : '<p>No recent game session data available.</p>'}
+      </div>
     </section>
   `;
   // Optional: results rendering logic here
@@ -263,14 +311,15 @@ function ResultsPage() {
 // Calendar rendering
 // -----------------------------------------------------------------------------
 function drawCalendar(root, state, journal) {
-  const cur = new Date(state.cursor.getFullYear(), state.cursor.getMonth(), 1);
+  const cur = new Date(state.cursor.getFullYear(), state.cursor.getMonth(), 1); // Current month
   const year = cur.getFullYear();
   const month = cur.getMonth();
-  const firstDow = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const todayStr = ymd(new Date());
-  const selectedStr = ymd(state.selected);
+  const firstDow = new Date(year, month, 1).getDay(); // Day of the week of the first day of the month
+  const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in the current month
+  const todayStr = ymd(new Date()); // Today's date in YYYY-MM-DD format
+  const selectedStr = ymd(state.selected); // Selected date in YYYY-MM-DD format
 
+  // Start building the HTML for the calendar
   root.innerHTML = `
     <div class="cal-head">
       <button class="btn secondary" id="prev-month">◀</button>
@@ -279,49 +328,52 @@ function drawCalendar(root, state, journal) {
     </div>
     <div class="cal-grid">
       ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div class="cal-dow">${d}</div>`).join('')}
-      ${Array.from({ length: firstDow }).map(() => '<div></div>').join('')}
+      ${Array.from({ length: firstDow }).map(() => '<div></div>').join('')} 
       ${Array.from({ length: daysInMonth }, (_, i) => {
     const d = i + 1;
-    const dateStr = ymd(new Date(year, month, d));
-    const has = Boolean(journal[dateStr]);
-    const isToday = dateStr === todayStr;
-    const isSel = dateStr === selectedStr;
+    const dateStr = ymd(new Date(year, month, d)); // Date in YYYY-MM-DD format
+    const has = Boolean(journal[dateStr]); // Check if there's an entry for the date
+    const isToday = dateStr === todayStr; // Check if it's today's date
+    const isSel = dateStr === selectedStr; // Check if it's the selected date
     const cls = ['cal-cell', has ? 'has-entry' : '', isToday ? 'today' : '', isSel ? 'selected' : ''].join(' ').trim();
     return `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
   }).join('')}
     </div>
   `;
 
-  root.querySelector('#prev-month').onclick = () => {
-    state.cursor = new Date(year, month - 1, 1);
-    drawCalendar(root, state, journal);
-  };
-  root.querySelector('#next-month').onclick = () => {
-    state.cursor = new Date(year, month + 1, 1);
-    drawCalendar(root, state, journal);
-  };
-  root.querySelectorAll('.cal-cell').forEach(cell => {
-    cell.addEventListener('click', () => {
-      state.selected = new Date(cell.dataset.date);
-      // load selected day into form (if present)
-      const j = loadJournal();
-      const e = j[cell.dataset.date] || { date: cell.dataset.date, mood: 3, wellbeing: 'okay', pain: '', notes: '' };
-      const mood = document.getElementById('mood');
-      if (mood) {
-        document.getElementById('mood').value = e.mood;
-        document.getElementById('wellbeing').value = e.wellbeing;
-        document.getElementById('pain').value = e.pain || '';
-        document.getElementById('notes').value = e.notes || '';
-      }
-      drawCalendar(root, state, j);
-    });
-  });
+  // Handle month navigation (previous and next month buttons)
+root.querySelectorAll('.cal-cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const dateStr = cell.dataset.date; // e.g., "2025-09-07"
+      // Manually parse the date string to ensure correct handling
+      const parts = dateStr.split('-');
+      const clickedDate = new Date(parts[0], parts[1] - 1, parts[2]); // Note: month is 0-indexed
+
+      state.selected = clickedDate; // Update the selected date in the state
+
+      const journalEntry = journal[dateStr] || { date: dateStr, mood: 3, wellbeing: 'okay', pain: '', notes: '' };
+
+      document.getElementById('mood').value = journalEntry.mood;
+      document.getElementById('wellbeing').value = journalEntry.wellbeing;
+      document.getElementById('pain').value = journalEntry.pain || '';
+      document.getElementById('notes').value = journalEntry.notes || '';
+
+      drawCalendar(root, state, journal);
+    });
+  });
 }
+
+
+
 
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
-function ymd(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0, 10); }
+function ymd(d) {
+  // This will return the date in format YYYY-MM-DD
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0, 10);
+}
+
 function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
 function escapeHtml(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 function renderEntry(e) {
@@ -530,27 +582,31 @@ function setupThemeToggle() {
 
   if (isDark) {
     document.body.classList.add('dark-theme');
-    icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
+    icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
   } else {
     document.body.classList.add('light-theme');
-    icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+    icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
   }
 
   toggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-theme');
     document.body.classList.toggle('light-theme');
     const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
+    localStorage.setItem('theme', currentTheme);});
     if (currentTheme === 'dark') {
-      icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
-    } else {
       icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+    } else {
+      icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
     }
-  });
-}
+  };
 
 window.addEventListener('load', () => {
   router();
   initFloatingChatbot();
   setupThemeToggle();
 });
+    updateCalendarColor();
+
+
+
+
