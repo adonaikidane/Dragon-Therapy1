@@ -6,9 +6,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.use(cors());
+// Configure CORS to accept requests from your GitHub Pages URL
+const corsOptions = {
+  origin: 'https://Kami1230.github.io',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const API_KEY = process.env.GEMINI_API_KEY;
@@ -120,5 +125,5 @@ app.post('/chatbot', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
+    console.log(`Server listening on port ${port}`);
 });

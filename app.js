@@ -388,7 +388,7 @@ function AI_InsightsPage() {
     analyzeBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data with AI...";
       try {
-        const response = await fetch('http://localhost:3000/analyze-data', {
+        const response = await fetch('https://gemini-backend-api.onrender.com/analyze-data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -405,7 +405,7 @@ function AI_InsightsPage() {
     outliersBtn.addEventListener("click", async () => {
       outputDiv.textContent = "Analyzing data for outliers...";
       try {
-        const response = await fetch('http://localhost:3000/analyze-outliers', {
+        const response = await fetch('https://gemini-backend-api.onrender.com/analyze-outliers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: patientData })
@@ -475,7 +475,7 @@ function initFloatingChatbot() {
 
     try {
       addMessageToChatbox("Typing...", "system");
-      const response = await fetch('http://localhost:3000/chatbot', {
+      const response = await fetch('https://gemini-backend-api.onrender.com/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage, data: patientData })
