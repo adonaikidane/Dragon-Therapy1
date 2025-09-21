@@ -1,5 +1,6 @@
+/* --- Global Variables & Defaults --- */
 :root {
---bg: #ffffff;
+  --bg: #ffffff;
   --panel: #f3f4f6;
   --text: #333333;
   --muted: #777777;
@@ -8,7 +9,19 @@
   --line: #e0e0e0;
   --ok: #2ecc71;
   --warn: #f39c12;
-  
+}
+
+/* Dark theme variables */
+body.dark-theme {
+  --bg: #0b1020;
+  --panel: #111834;
+  --text: #e5e7eb;
+  --muted: #9aa3b2;
+  --accent: #4f46e5;
+  --card: #0f172a;
+  --line: #223058;
+  --ok: #16a34a;
+  --warn: #f59e0b;
 }
 
 * {
@@ -21,13 +34,22 @@ html, body {
 
 body {
   margin: 0;
-  /*font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif;*/
   font-family: "Lucida Bright", Georgia, serif;
   background: linear-gradient(180deg, #0b1020, #0d1734);
   color: var(--text);
+  transition: background-color 0.3s ease;
 }
 
-/* ------------------- NAVBAR ------------------- */
+/* ------------------- Theme Specific Backgrounds ------------------- */
+body.light-theme {
+  background: linear-gradient(rgb(247, 221, 248), rgb(244, 221, 165), rgb(252, 210, 144));
+}
+
+body.dark-theme {
+    background: linear-gradient(180deg, #0b1020, #0d1734);
+}
+
+/* ------------------- Navbar & Header ------------------- */
 .topbar {
   display: flex;
   align-items: center;
@@ -66,7 +88,22 @@ body {
   color: var(--text);
 }
 
-/* ------------------- MAIN LAYOUT ------------------- */
+.theme-container {
+    margin-left: auto;
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#theme-icon {
+    width: 30px;
+    height: 30px;
+}
+
+/* ------------------- Main Layout & Components ------------------- */
 main#app {
   max-width: 1180px;
   margin: 24px auto;
@@ -83,7 +120,8 @@ main#app {
 
 h1 {
   margin: 0 0 8px;
-  font-size: 28px;}
+  font-size: 28px;
+}
 
 h2 {
   margin: 0 0 12px;
@@ -115,7 +153,6 @@ p {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-/* ------------------- CARDS & ELEMENTS ------------------- */
 .card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -147,28 +184,7 @@ p {
   font-size: 12px;
 }
 
-
-/* theme toggle*/
-body.dark-theme {
-  --bg: #0b1020;
-  --panel: #111834;
-  --text: #e5e7eb;
-  --muted: #9aa3b2;
-  --accent: #4f46e5;
-  --card: #0f172a;
-  --line: #223058;
-  --ok: #16a34a;
-  --warn: #f59e0b;
-}
-#theme-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-/* game icons*/
-/* Add this to your app.css file */
-
+/* ------------------- Game & Calendar ------------------- */
 .game-selection-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -211,37 +227,6 @@ body.dark-theme {
   font-weight: 600;
 }
 
-#theme-icon {
-    width: 30px;
-    height: 30px;
-}
-
-/* Light theme specific styles */
-body.light-theme {
-  background: linear-gradient(rgb(247, 221, 248), rgb(244, 221, 165), rgb(252, 210, 144));
-}
-
-body.dark-theme{
-    background: linear-gradient(180deg, #0b1020, #0d1734);
-}
-
-.theme-container{
-    margin-left: auto;
-}
-/* Light theme styles */
-body.light-theme .calendar {
-  background-color: #8c3535;  /* Example: light background */
-  color: #fbf4f4;  /* Dark text for light mode */
-}
-
-/* Dark theme styles */
-body.dark-theme .calendar {
-  background-color: #333;  /* Example: dark background */
-  color: #fff;  /* Light text for dark mode */
-}
-
-
-/* ------------------- CANVAS ------------------- */
 .canvas-wrap {
   display: grid;
   gap: 8px;
@@ -256,7 +241,6 @@ canvas#game-canvas {
   border: 1px solid var(--line);
 }
 
-/* ------------------- PLACEHOLDER ------------------- */
 .placeholder {
   display: grid;
   place-items: center;
@@ -267,7 +251,6 @@ canvas#game-canvas {
   background: #0a0f22;
 }
 
-/* ------------------- CALENDAR ------------------- */
 .calendar {
   background: var(--card);
   border: 1px solid var(--line);
@@ -313,7 +296,7 @@ canvas#game-canvas {
 }
 
 .cal-cell.has-entry {
-  outline: 2px solid #4ade80;
+  outline: 2px solid var(--ok);
 }
 
 .cal-cell.today {
@@ -324,7 +307,7 @@ canvas#game-canvas {
   outline: 2px solid #93c5fd;
 }
 
-/* ------------------- INPUTS ------------------- */
+/* ------------------- Inputs & Forms ------------------- */
 .input,
 select,
 textarea {
@@ -348,7 +331,7 @@ hr.sep {
   margin: 12px 0;
 }
 
-/* ------------------- TABLES ------------------- */
+/* ------------------- Tables & Login ------------------- */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -361,7 +344,6 @@ hr.sep {
   text-align: left;
 }
 
-/* login */
 #loginBtn, #logoutBtn {
   padding: 10px 20px;
   margin: 10px;
@@ -379,15 +361,16 @@ hr.sep {
   margin-top: 20px;
 }
 
-/*---------------------GEMINI---------------------*/
+/* ------------------- Gemini API Section ------------------- */
 #correlation-container {
     background: #f8f5ff;
     padding: 24px;
     border-radius: 12px;
-    flex: 1; /* This makes both containers grow equally */
-    max-width:5000px; /* Prevents them from getting too wide */
-    margin: 32px 0; /* Use only top and bottom margin */
+    flex: 1;
+    max-width:5000px;
+    margin: 32px 0;
 }
+
 #ai-analysis-output {
     margin-top: 16px;
     font-size: 0.9em;
@@ -397,6 +380,7 @@ hr.sep {
     border-radius: 8px;
     min-height: 500px;
 }
+
 button {
     padding: 10px 20px;
     font-size: 0.9em;
@@ -406,7 +390,8 @@ button {
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s;
-}        
+}
+
 .button-row {
   display: flex;
   justify-content: center;
@@ -425,15 +410,25 @@ input {
     border-radius: 6px;
     min-height: 10 px;
 }
+
 button:hover {
     background: #9b5ded;
 }
 
-/* Floating Chatbot Styles */
-#chat-toggle-btn {
+/* ------------------- Floating Chatbot Styles ------------------- */
+/* The main container for the chatbot */
+#floating-chatbot-container {
     position: fixed;
     bottom: 20px;
     right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* This aligns the toggle button to the right */
+}
+
+/* The chatbot toggle button */
+#chat-toggle-btn {
     width: 60px;
     height: 60px;
     background: var(--accent);
@@ -443,11 +438,11 @@ button:hover {
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
     border: none;
     padding: 0;
+    z-index: 1001; /* Ensure button is above the chat window */
 }
 
 #chat-toggle-btn:hover {
@@ -460,16 +455,13 @@ button:hover {
     height: 32px;
 }
 
-#floating-chatbot-container {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
+/* The chatbot window */
+#chat-window {
     width: 350px;
     height: 450px;
     background: var(--card);
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    z-index: 999;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -479,21 +471,23 @@ button:hover {
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
 }
 
-#floating-chatbot-container.is-visible {
+#chat-window.is-visible {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
 #chatbox {
+    flex-grow: 1; /* Allows it to fill the available space */
     padding: 15px;
     display: flex;
     flex-direction: column;
+    overflow-y: auto; /* Allows scrolling for long chat history */
+    gap: 10px; /* Add spacing between messages */
 }
 
 .message {
     max-width: 80%;
-    margin-bottom: 10px;
     padding: 10px 15px;
     border-radius: 18px;
     line-height: 1.4;
@@ -509,7 +503,8 @@ button:hover {
 .system-message {
     background-color: var(--panel);
     color: var(--text);
-    align-self: flex-center;
+    /* Corrected: "flex-center" is not a valid align-self value */
+    align-self: flex-start;
     border-bottom-left-radius: 4px;
 }
 
