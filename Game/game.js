@@ -219,6 +219,8 @@ function setupLevel(lvl) {
   if (rewardInfo) rewardInfo.textContent = "";
   if (nextLevelBtn) nextLevelBtn.style.display = "none";
   if (statsDiv) statsDiv.textContent = "";
+
+  enableOrbDragging();
 }
 
 function drawGame() {
@@ -420,6 +422,8 @@ function checkLevelEnd() {
     // Show stats and reward
     showStats();
     giveReward();
+
+    enableOrbDragging();
     if (level < MAX_LEVEL) {
       if (nextLevelBtn) nextLevelBtn.style.display = "inline-block";
     } else {
@@ -427,6 +431,17 @@ function checkLevelEnd() {
       if (statsDiv) statsDiv.textContent += "🎉 Congratulations! You've completed all 10 levels!";
     }
   }
+}
+
+function enableOrbDragging() {
+  const canvas = document.getElementById('game-canvas');
+  if (!canvas) return;
+  canvas.addEventListener('mousedown', startDrag);
+  canvas.addEventListener('touchstart', startDrag, { passive: false });
+  canvas.addEventListener('mousemove', dragOrb);
+  canvas.addEventListener('touchmove', dragOrb, { passive: false });
+  canvas.addEventListener('mouseup', endDrag);
+  canvas.addEventListener('touchend', endDrag);
 }
 
 function showStats() {
@@ -441,6 +456,12 @@ function showStats() {
       Range of Motion: <b>${range} zones</b>
     `;
   }
+  window.gameData.history.push({
+    level: level,
+    speed: parseFloat(speedAvg),
+    accuracy: acc,
+    rangeOfMotion: range
+  });
 }
 
 function giveReward() {
@@ -502,11 +523,3 @@ window.initInjuryGame = function () {
   gameActive = true;
   requestAnimationFrame(gameLoop);
 };
-
-// ---------------- IMPORTANT ----------------
-// Remove the old auto-start lines that were at the bottom:
-//   setupLevel(level);
-//   requestAnimationFrame(gameLoop);
-//
-// The game now starts when your Dashboard calls:
-//   if (typeof window.initInjuryGame === 'function') window.initInjuryGame();
