@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // Configure CORS to accept requests from your GitHub Pages URL
 const corsOptions = {
@@ -122,6 +122,9 @@ app.post('/chatbot', async (req, res) => {
         console.error('Chatbot endpoint error:', error);
         res.status(500).json({ error: 'Failed to get a response from the chatbot.' });
     }
+});
+app.get("/", (req, res) => {
+  res.send("Gemini Backend API is running!");
 });
 
 app.listen(port, () => {
