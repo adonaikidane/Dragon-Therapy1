@@ -479,7 +479,7 @@ function initFloatingChatbot() {
 
     try {
       addMessageToChatbox("Typing...", "system");
-        const response = await fetch(`${API_BASE_URL}`, {
+        const response = await fetch(`${API_BASE_URL}/chatbot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: userMessage, data: patientData })
