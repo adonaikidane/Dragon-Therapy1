@@ -4,13 +4,10 @@
   <meta charset="utf-8" />
   <title>🐲Dragon Recovery</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  
   <link rel="stylesheet" href="./app.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
 </head>
-<body class="dark-theme">
+<body>
   <header class="topbar">
     <div class="brand">🐲Dragon Therapy</div>
     <nav class="nav">
@@ -21,12 +18,16 @@
     </nav>
     <div class="theme-container">
         <button id="theme-toggle" aria-label="Toggle dark/light theme">
-            <img id="theme-icon" src="./img/mode.png" alt="Dark theme">
+            <img id="theme-icon" src="./img/brightness-and-contrast.png" alt="Light theme">
         </button>
     </div>
+
+
   </header>
 
   <main id="app"></main>
+
+  <!-- Floating Chatbot UI -->
     <div id="floating-chatbot-container">
         <div class="chat-header">AI Chatbot</div>
         <div id="chatbox">
@@ -58,6 +59,6 @@
   <!-- <script src="./game/game.js"></script> -->
   <script type="module" src="./app.js"></script>
 
+<script src="theme-toggle.js"></script>
 </body>
 </html>
-
