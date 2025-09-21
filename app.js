@@ -126,7 +126,7 @@ function CalendarPage() {
   app.innerHTML = `
     <section class="panel">
       <div class="row" style="justify-content:space-between; align-items:center;">
-        <div><h1>Calendar</h1><p>Track mood, wellbeing and pain daily.</p></div>
+        <div><h1>Calendar</h1><p>Track mood, wellbeing, and pain daily.</p></div>
         <a class="btn secondary" href="#/dashboard">Back to Game</a>
       </div>
 
@@ -270,14 +270,15 @@ function ResultsPage() {
 // Calendar rendering
 // -----------------------------------------------------------------------------
 function drawCalendar(root, state, journal) {
-  const cur = new Date(state.cursor.getFullYear(), state.cursor.getMonth(), 1);
+  const cur = new Date(state.cursor.getFullYear(), state.cursor.getMonth(), 1); // Current month
   const year = cur.getFullYear();
   const month = cur.getMonth();
-  const firstDow = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const todayStr = ymd(new Date());
-  const selectedStr = ymd(state.selected);
+  const firstDow = new Date(year, month, 1).getDay(); // Day of the week of the first day of the month
+  const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in the current month
+  const todayStr = ymd(new Date()); // Today's date in YYYY-MM-DD format
+  const selectedStr = ymd(state.selected); // Selected date in YYYY-MM-DD format
 
+  // Start building the HTML for the calendar
   root.innerHTML = `
     <div class="cal-head">
       <button class="btn secondary" id="prev-month">◀</button>
@@ -286,49 +287,52 @@ function drawCalendar(root, state, journal) {
     </div>
     <div class="cal-grid">
       ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div class="cal-dow">${d}</div>`).join('')}
-      ${Array.from({ length: firstDow }).map(() => '<div></div>').join('')}
+      ${Array.from({ length: firstDow }).map(() => '<div></div>').join('')} 
       ${Array.from({ length: daysInMonth }, (_, i) => {
     const d = i + 1;
-    const dateStr = ymd(new Date(year, month, d));
-    const has = Boolean(journal[dateStr]);
-    const isToday = dateStr === todayStr;
-    const isSel = dateStr === selectedStr;
+    const dateStr = ymd(new Date(year, month, d)); // Date in YYYY-MM-DD format
+    const has = Boolean(journal[dateStr]); // Check if there's an entry for the date
+    const isToday = dateStr === todayStr; // Check if it's today's date
+    const isSel = dateStr === selectedStr; // Check if it's the selected date
     const cls = ['cal-cell', has ? 'has-entry' : '', isToday ? 'today' : '', isSel ? 'selected' : ''].join(' ').trim();
     return `<div class="${cls}" data-date="${dateStr}">${d}</div>`;
   }).join('')}
     </div>
   `;
 
-  root.querySelector('#prev-month').onclick = () => {
-    state.cursor = new Date(year, month - 1, 1);
-    drawCalendar(root, state, journal);
-  };
-  root.querySelector('#next-month').onclick = () => {
-    state.cursor = new Date(year, month + 1, 1);
-    drawCalendar(root, state, journal);
-  };
-  root.querySelectorAll('.cal-cell').forEach(cell => {
-    cell.addEventListener('click', () => {
-      state.selected = new Date(cell.dataset.date);
-      // load selected day into form (if present)
-      const j = loadJournal();
-      const e = j[cell.dataset.date] || { date: cell.dataset.date, mood: 3, wellbeing: 'okay', pain: '', notes: '' };
-      const mood = document.getElementById('mood');
-      if (mood) {
-        document.getElementById('mood').value = e.mood;
-        document.getElementById('wellbeing').value = e.wellbeing;
-        document.getElementById('pain').value = e.pain || '';
-        document.getElementById('notes').value = e.notes || '';
-      }
-      drawCalendar(root, state, j);
-    });
-  });
+  // Handle month navigation (previous and next month buttons)
+root.querySelectorAll('.cal-cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const dateStr = cell.dataset.date; // e.g., "2025-09-07"
+      // Manually parse the date string to ensure correct handling
+      const parts = dateStr.split('-');
+      const clickedDate = new Date(parts[0], parts[1] - 1, parts[2]); // Note: month is 0-indexed
+
+      state.selected = clickedDate; // Update the selected date in the state
+
+      const journalEntry = journal[dateStr] || { date: dateStr, mood: 3, wellbeing: 'okay', pain: '', notes: '' };
+
+      document.getElementById('mood').value = journalEntry.mood;
+      document.getElementById('wellbeing').value = journalEntry.wellbeing;
+      document.getElementById('pain').value = journalEntry.pain || '';
+      document.getElementById('notes').value = journalEntry.notes || '';
+
+      drawCalendar(root, state, journal);
+    });
+  });
 }
+
+
+
 
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
-function ymd(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0, 10); }
+function ymd(d) {
+  // This will return the date in format YYYY-MM-DD
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0, 10);
+}
+
 function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
 function escapeHtml(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 function renderEntry(e) {
