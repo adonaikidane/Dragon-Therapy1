@@ -371,7 +371,28 @@ if (toggleButton && themeIcon) {
     }
   });
 }
-
+/*
+function processPatientData() {
+    // Check if the global variable exists and has data
+    if (window.gameData && window.gameData.history.length > 0) {
+        // Retrieve the data from the last completed level
+        const patientData = window.gameData.history[window.gameData.history.length - 1];
+        
+        console.log("Patient Data for the last round:");
+        console.log(`Level: ${patientData.level}`);
+        console.log(`Average Speed: ${patientData.speed}s`);
+        console.log(`Misses/Errors: ${patientData.accuracy}`);
+        console.log(`Range of Motion: ${patientData.rangeOfMotion} zones`);
+        
+        // You can now use this data for your AI model or other processing
+        // For example:
+        // sendDataToAI(patientData); 
+        // updateDashboard(patientData);
+    } else {
+        console.log("No game data available yet.");
+    }
+}
+*/
 // AI Insights Page (separate from chatbot)
 function AI_InsightsPage() {
   const html = `
