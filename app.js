@@ -380,61 +380,70 @@ function AI_InsightsPage() {
     `;
 
     const setup = () => {
-        const outputDiv = document.getElementById("ai-analysis-output");
-        const analyzeBtn = document.getElementById("analyze-btn");
-        const outliersBtn = document.getElementById("outliers-btn");
-        analyzeBtn.addEventListener("click", async () => {
-            outputDiv.textContent = "Analyzing data with AI...";
-            try {
-                const response = await fetch(`${API_BASE_URL}/analyze-data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: patientData })
-                });
-                if (!response.ok) throw new Error('Server response was not ok');
-                const result = await response.json();
-                outputDiv.textContent = result.analysis;
-            } catch (e) {
-                outputDiv.textContent = "There was an error analyzing the data.";
-                console.error("Fetch error:", e);
-            }
-        });
+        const outputDiv = document.getElementById('ai-analysis-output');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const outliersBtn = document.getElementById('outliers-btn');
 
-        outliersBtn.addEventListener("click", async () => {
-            outputDiv.textContent = "Analyzing data for outliers...";
-            try {
-                const response = await fetch(`${API_BASE_URL}/analyze-outliers`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: patientData })
-                });
-                if (!response.ok) throw new Error('Server response was not ok');
-                const result = await response.json();
-                if (result.analysis.summary) {
-                    let html = `<h3>${result.analysis.summary}</h3>`;
-                    if (result.analysis.outliers && result.analysis.outliers.length > 0) {
-                        html += "<h2>Outliers Found:</h2><ul>";
-                        result.analysis.outliers.forEach(outlier => {
-                            html += `<li><strong>Session ${outlier.session}</strong>: An unusual ${outlier.metric} was detected. Reason: ${outlier.reason}</li>`;
-                        });
-                        html += "</ul>";
-                    } else {
-                        html += "<p>No significant outliers were detected.</p>";
-                    }
-                    outputDiv.innerHTML = html;
-                } else {
-                    outputDiv.textContent = JSON.stringify(result.analysis, null, 2);
+        function safeText(msg) {
+            if (outputDiv) outputDiv.textContent = msg;
+        }
+
+        if (analyzeBtn) {
+            analyzeBtn.addEventListener('click', async () => {
+                safeText('Analyzing data with AI...');
+                try {
+                    const response = await fetch(`${API_BASE_URL}/analyze-data`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: patientData })
+                    });
+                    if (!response.ok) throw new Error('Server response was not ok');
+                    const result = await response.json();
+                    safeText(result.analysis || JSON.stringify(result));
+                } catch (e) {
+                    safeText('There was an error analyzing the data.');
+                    console.error('Fetch error:', e);
                 }
-            } catch (e) {
-                outputDiv.textContent = "There was an error analyzing the data for outliers.";
-                console.error("Fetch error:", e);
-            }
-        });
+            });
+        }
+
+        if (outliersBtn) {
+            outliersBtn.addEventListener('click', async () => {
+                safeText('Analyzing data for outliers...');
+                try {
+                    const response = await fetch(`${API_BASE_URL}/analyze-outliers`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: patientData })
+                    });
+                    if (!response.ok) throw new Error('Server response was not ok');
+                    const result = await response.json();
+
+                    if (result.analysis && result.analysis.summary) {
+                        let html = `<h3>${result.analysis.summary}</h3>`;
+                        if (result.analysis.outliers && result.analysis.outliers.length > 0) {
+                            html += '<h2>Outliers Found:</h2><ul>';
+                            result.analysis.outliers.forEach(outlier => {
+                                html += `<li><strong>Session ${outlier.session}</strong>: An unusual ${outlier.metric} was detected. Reason: ${outlier.reason}</li>`;
+                            });
+                            html += '</ul>';
+                        } else {
+                            html += '<p>No significant outliers were detected.</p>';
+                        }
+                        if (outputDiv) outputDiv.innerHTML = html;
+                    } else {
+                        if (outputDiv) outputDiv.textContent = JSON.stringify(result.analysis || result, null, 2);
+                    }
+                } catch (e) {
+                    safeText('There was an error analyzing the data for outliers.');
+                    console.error('Fetch error:', e);
+                }
+            });
+        }
     };
 
     return { html, setup };
 }
-
 // Initialize Floating Chatbot
 function initFloatingChatbot() {
     const chatToggleBtn = document.getElementById('chat-toggle-btn');
@@ -442,6 +451,10 @@ function initFloatingChatbot() {
     const chatInput = document.getElementById('chat-input');
     const chatSendBtn = document.getElementById('chat-send-btn');
     const chatbox = document.getElementById('chatbox');
+
+    // If core elements don't exist, don't initialize the chatbot.
+    if (!chatToggleBtn || !chatbotContainer || !chatInput || !chatSendBtn || !chatbox) return;
+
     let hasGreeted = false;
 
     // Chatbot toggle logic
@@ -451,46 +464,47 @@ function initFloatingChatbot() {
 
     // Helper function to add messages to the chatbox
     function addMessageToChatbox(text, sender) {
-        const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message");
-        messageDiv.classList.add(sender === "user" ? "user-message" : "system-message");
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(sender === 'user' ? 'user-message' : 'system-message');
         messageDiv.textContent = text;
         chatbox.appendChild(messageDiv);
         chatbox.scrollTop = chatbox.scrollHeight;
     }
+
     // Chatbot send message logic
-    chatSendBtn.addEventListener("click", async () => {
+    chatSendBtn.addEventListener('click', async () => {
         const userMessage = chatInput.value.trim();
-        if (userMessage === "") return;
+        if (userMessage === '') return;
 
         if (!hasGreeted) {
-            chatbox.innerHTML = "";
+            chatbox.innerHTML = '';
             hasGreeted = true;
         }
 
-        addMessageToChatbox(userMessage, "user");
-        chatInput.value = "";
+        addMessageToChatbox(userMessage, 'user');
+        chatInput.value = '';
 
         try {
-            addMessageToChatbox("Typing...", "system");
+            addMessageToChatbox('Typing...', 'system');
             const response = await fetch(`${API_BASE_URL}/chatbot`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: userMessage, data: patientData })
             });
-
             const result = await response.json();
-            chatbox.removeChild(chatbox.lastChild);
-            addMessageToChatbox(result.response, "system");
+            // Remove the 'Typing...' system message
+            if (chatbox.lastChild) chatbox.removeChild(chatbox.lastChild);
+            addMessageToChatbox(result.response || 'No response', 'system');
         } catch (e) {
-            chatbox.removeChild(chatbox.lastChild);
-            addMessageToChatbox("Sorry, I could not process that request.", "system");
-            console.error("Chatbot error:", e);
+            if (chatbox.lastChild) chatbox.removeChild(chatbox.lastChild);
+            addMessageToChatbox('Sorry, I could not process that request.', 'system');
+            console.error('Chatbot error:', e);
         }
     });
 
-    chatInput.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") {
+    chatInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
             chatSendBtn.click();
         }
     });
@@ -499,26 +513,29 @@ function initFloatingChatbot() {
 function setupThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle');
     const icon = document.getElementById('theme-icon');
-    const isDark = localStorage.getItem('theme') === 'dark';
+    if (!toggleBtn || !icon) return;
 
-    if (isDark) {
-        document.body.classList.add('dark-theme');
-        icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
-    } else {
-        document.body.classList.add('light-theme');
-        icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+    const isDark = localStorage.getItem('theme') === 'dark';
+    document.body.classList.toggle('dark-theme', isDark);
+    document.body.classList.toggle('light-theme', !isDark);
+
+    function setIcon(dark) {
+        if (dark) {
+            icon.src = './img/mode.png';
+            icon.alt = 'Dark theme';
+        } else {
+            icon.src = './img/brightness-and-contrast.png';
+            icon.alt = 'Light theme';
+        }
     }
 
+    setIcon(isDark);
+
     toggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark-theme');
-        document.body.classList.toggle('light-theme');
-        const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-        localStorage.setItem('theme', currentTheme);
-        if (currentTheme === 'dark') {
-            icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
-        } else {
-            icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
-        }
+        const dark = document.body.classList.toggle('dark-theme');
+        document.body.classList.toggle('light-theme', !dark);
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        setIcon(dark);
     });
 }
 
