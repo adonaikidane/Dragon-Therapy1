@@ -5,6 +5,7 @@
     <title>🐲Dragon Recovery</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./app.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
   </head>
   <body class="dark-theme">
@@ -18,14 +19,15 @@
         </nav>
         <div class="theme-container">
             <button id="theme-toggle" aria-label="Toggle dark/light theme">
-                <img id="theme-icon" src="./img/mode.png" alt="Dark theme">
+                <span id="theme-icon" class="material-symbols-outlined">
+                    dark_mode
+                </span>
             </button>
         </div>
     </header>
     
     <main id="app"></main>
 
-    <!-- Floating Chatbot UI -->
     <div id="floating-chatbot-container">
         <button id="chat-toggle-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle">
@@ -36,7 +38,12 @@
         </button>
 
         <div id="chat-window">
-            <div class="chat-header">AI Chatbot</div>
+            <div class="chat-header">
+                AI Chatbot
+                <button id="close-chat-btn">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
             <div id="chatbox">
                 <div class="message system-message">
                     Hello! I'm your AI assistant. I can help you understand your therapy data. Feel free to ask me anything about your progress!
@@ -56,7 +63,5 @@
 
     <script src="./app.js"></script>
     <script src="./Game/game.js"></script>
-    <!--<script type="module" src="./app.js"></script>-->
-    <script src="theme-toggle.js"></script>
   </body>
 </html>

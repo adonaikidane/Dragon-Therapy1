@@ -447,6 +447,7 @@ function AI_InsightsPage() {
 // Initialize Floating Chatbot
 function initFloatingChatbot() {
     const chatToggleBtn = document.getElementById('chat-toggle-btn');
+    const closeChatBtn = document.getElementById('close-chat-btn');
     const chatbotContainer = document.getElementById('floating-chatbot-container');
     const chatInput = document.getElementById('chat-input');
     const chatSendBtn = document.getElementById('chat-send-btn');
@@ -459,7 +460,11 @@ function initFloatingChatbot() {
 
     // Chatbot toggle logic
     chatToggleBtn.addEventListener('click', () => {
-        chatbotContainer.classList.toggle('is-visible');
+        chatbotContainer.classList.add('is-visible');
+    });
+
+    closeChatBtn.addEventListener('click', () => {
+        chatbotContainer.classList.remove('is-visible');
     });
 
     // Helper function to add messages to the chatbox
@@ -467,6 +472,9 @@ function initFloatingChatbot() {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
         messageDiv.classList.add(sender === 'user' ? 'user-message' : 'system-message');
+        if (text === 'Typing...') {
+            messageDiv.classList.add('typing-indicator');
+        }
         messageDiv.textContent = text;
         chatbox.appendChild(messageDiv);
         chatbox.scrollTop = chatbox.scrollHeight;
@@ -494,10 +502,12 @@ function initFloatingChatbot() {
             });
             const result = await response.json();
             // Remove the 'Typing...' system message
-            if (chatbox.lastChild) chatbox.removeChild(chatbox.lastChild);
+            const typingMessage = chatbox.querySelector('.typing-indicator');
+            if (typingMessage) typingMessage.remove();
             addMessageToChatbox(result.response || 'No response', 'system');
         } catch (e) {
-            if (chatbox.lastChild) chatbox.removeChild(chatbox.lastChild);
+            const typingMessage = chatbox.querySelector('.typing-indicator');
+            if (typingMessage) typingMessage.remove();
             addMessageToChatbox('Sorry, I could not process that request.', 'system');
             console.error('Chatbot error:', e);
         }
@@ -512,21 +522,16 @@ function initFloatingChatbot() {
 
 function setupThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle');
-    const icon = document.getElementById('theme-icon');
-    if (!toggleBtn || !icon) return;
+    const iconSpan = document.getElementById('theme-icon');
+    if (!toggleBtn || !iconSpan) return;
 
     const isDark = localStorage.getItem('theme') === 'dark';
     document.body.classList.toggle('dark-theme', isDark);
     document.body.classList.toggle('light-theme', !isDark);
 
     function setIcon(dark) {
-        if (dark) {
-            icon.src = './img/mode.png';
-            icon.alt = 'Dark theme';
-        } else {
-            icon.src = './img/brightness-and-contrast.png';
-            icon.alt = 'Light theme';
-        }
+        iconSpan.textContent = dark ? 'dark_mode' : 'light_mode';
+        iconSpan.alt = dark ? 'Dark theme' : 'Light theme';
     }
 
     setIcon(isDark);
