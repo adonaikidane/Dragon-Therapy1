@@ -451,16 +451,22 @@ function initFloatingChatbot() {
     const chatbotContainer = document.getElementById('floating-chatbot-container');
     const chatInput = document.getElementById('chat-input');
     const chatSendBtn = document.getElementById('chat-send-btn');
-    const chatbox = document.getElementById('chatbox');
+    const chatbox = document.getElementById('chatbox')
+
+    // If core elements don't exist, don't initialize the chatbot.
+    if (!chatToggleBtn || !chatbotContainer || !chatInput || !chatSendBtn || !chatbox) return;
+
     let hasGreeted = false;
 
     // Chatbot toggle logic
     chatToggleBtn.addEventListener('click', () => {
         chatbotContainer.classList.add('is-visible');
+        chatToggleBtn.classList.add('is-hidden');
     });
 
     closeChatBtn.addEventListener('click', () => {
         chatbotContainer.classList.remove('is-visible');
+        chatToggleBtn.classList.remove('is-hidden');
     });
 
     // Helper function to add messages to the chatbox

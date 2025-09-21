@@ -9,6 +9,21 @@
   --line: #e0e0e0;
   --ok: #2ecc71;
   --warn: #f39c12;
+
+  /* Calendar in Light Theme */
+  --cal-cell-bg-light: #f7fafc;
+  --cal-cell-border-light: #e0e0e0;
+  --cal-has-entry-outline-light: #3498db;
+  --cal-today-border-light: #94a3b8;
+  --cal-selected-outline-light: #2563eb;
+
+  /* Input/Form in Light Theme */
+  --input-bg-light: #f7fafc;
+  --input-border-light: #e0e0e0;
+  --input-text-light: #2c3e50;
+
+  /* Table in Light Theme */
+  --table-border-light: #dee2e6;
 }
 
 /* Dark theme variables */
@@ -313,6 +328,39 @@ canvas#game-canvas {
 .cal-cell.selected {
   outline: 2px solid #93c5fd;
 }
+body.light-theme .cal-head {
+  background: #e9ecef;
+  border-bottom-color: #dee2e6;
+  color: var(--text);
+}
+
+
+body.light-theme .cal-dow,
+body.light-theme .cal-cell {
+  color: var(--muted);
+}
+
+body.light-theme .cal-cell {
+  background: var(--cal-cell-bg-light);
+  border: 1px solid var(--cal-cell-border-light);
+}
+
+body.light-theme .cal-cell:hover {
+  background: #e9ecef;
+}
+
+body.light-theme .cal-cell.has-entry {
+  outline: 2px solid var(--cal-has-entry-outline-light);
+}
+
+body.light-theme .cal-cell.today {
+  border-color: var(--cal-today-border-light);
+}
+
+body.light-theme .cal-cell.selected {
+  outline: 2px solid var(--cal-selected-outline-light);
+}
+
 
 /* ------------------- Inputs & Forms ------------------- */
 .input,
@@ -336,6 +384,21 @@ hr.sep {
   border: none;
   border-top: 1px solid var(--line);
   margin: 12px 0;
+}
+
+
+/* Light Theme Input Overrides */
+body.light-theme .input,
+body.light-theme select,
+body.light-theme textarea {
+  background: var(--input-bg-light);
+  border: 1px solid var(--input-border-light);
+  color: var(--input-text-light);
+}
+
+body.light-theme .table th,
+body.light-theme .table td {
+  border-bottom: 1px solid var(--table-border-light);
 }
 
 /* ------------------- Tables & Login ------------------- */
@@ -460,6 +523,11 @@ button:hover {
     transition: transform 0.2s ease-in-out, background 0.3s;
     border: none;
     padding: 0;
+}
+
+#chat-toggle-btn.is-hidden {
+    opacity: 0;
+    pointer-events: none; /* Prevents button from being clickable when hidden */
 }
 
 #chat-toggle-btn:hover {
