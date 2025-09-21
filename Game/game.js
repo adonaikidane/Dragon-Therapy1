@@ -884,3 +884,5 @@ window.initInjuryGame = function () {
     startLevel();
     requestAnimationFrame(gameLoop);
 };
+
+// my adjusted code
