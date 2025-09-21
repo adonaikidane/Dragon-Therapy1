@@ -1,64 +1,34 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>🐲Dragon Recovery</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  
   <link rel="stylesheet" href="./app.css" />
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
-<body>
+<body class="dark-theme">
   <header class="topbar">
     <div class="brand">🐲Dragon Therapy</div>
     <nav class="nav">
       <a href="#/dashboard">Dashboard</a>
       <a href="#/calendar">Calendar</a>
       <a href="#/results">Results</a>
-      <a href="#/ai-insights">AI Insights</a>
     </nav>
     <div class="theme-container">
         <button id="theme-toggle" aria-label="Toggle dark/light theme">
-            <img id="theme-icon" src="./img/brightness-and-contrast.png" alt="Light theme">
+            <img id="theme-icon" src="./img/mode.png" alt="Dark theme">
         </button>
     </div>
-
-
   </header>
 
   <main id="app"></main>
-    <div id="floating-chatbot-container">
-        <div class="chat-header">AI Chatbot</div>
-        <div id="chatbox">
-            <div class="message system-message">
-                Hello! I'm here to answer questions about the patient's progress. You can ask me things like, "What does the range of motion data mean?"
-            </div>
-        </div>
-        <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Ask a question...">
-            <button id="chat-send-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send">
-                    <path d="m22 2-7 19-3-7L2 22l19-7Z" />
-                    <path d="M11 11l-3 3" />
-                </svg>
-            </button>
-        </div>
-    </div>
-    <button id="chat-toggle-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle">
-            <path d="M7.9 20A9.33 9.33 0 0 1 21 12.1a9.08 9.08 0 0 0-4-3.5" />
-            <path d="M17.4 12c.5-1.5.9-3.2.7-4.7A9.48 9.48 0 0 0 3 10.3c.7-2.6 2.3-5 4.9-6.9C9.7 1.2 12 2 13 3" />
-            <path d="M10.8 2.6c2.4-.2 4.9 1.1 6.5 2.5" />
-            <path d="M21 12.1a9.08 9.08 0 0 0-4-3.5c-.3-1.4-.7-3.1-.7-4.7A9.48 9.48 0 0 0 3 10.3c.7-2.6 2.3-5 4.9-6.9C9.7 1.2 12 2 13 3" />
-        </svg>
-    </button>
 
-  <!- Optional: load your actual game when ready ->
-   <script src="./Game/game.js"></script>
-  <-- <script src="./game/game.js"></script> ->
+  <script src="./Game/game.js"></script>
   <script type="module" src="./app.js"></script>
 
-<script src="theme-toggle.js"></script>
 </body>
 </html>
-
