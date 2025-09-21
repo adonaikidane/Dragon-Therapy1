@@ -40,7 +40,17 @@ function router() {
     page = ResultsPage();
   } else if (route.startsWith('/ai-insights')) {
     page = AI_InsightsPage();
-  } else {
+  } else if (route.startsWith('/dragon-game')) {
+    DragonGamePage();
+  }else if (route.startsWith('/bird-game')) {
+    BirdGamePage();
+  }else if (route.startsWith('/monster-game')) {
+    MonsterGamePage();
+  }
+  else if (route.startsWith('/add-game')) {
+    AddmoreGame();
+  }
+  else {
     app.innerHTML = `<section class="panel"><h1>Not Found</h1></section>`;
     return;
   }
@@ -58,36 +68,64 @@ window.addEventListener('load', router);
 
 // Pages
 function DashboardPage() {
-  app.innerHTML = `
-    <section class="panel">
-      <div class="row" style="justify-content:space-between; align-items:center;">
-        <div><h1>Dashboard</h1><p>Play the game here. Use the Calendar tab to log wellbeing.</p></div>
-        <div class="row" style="gap:8px">
-          <a class="btn secondary" href="#/calendar">Calendar</a>
-          <a class="btn secondary" href="#/results">Results</a>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
+    app.innerHTML = `
+      <section class="panel">
         <div class="row" style="justify-content:space-between; align-items:center;">
-          <div class="row" style="gap:8px;">
-            <h2 style="margin:0">Game</h2>
-            <span class="badge">Live</span>
-          </div>
-          <button class="btn secondary" id="reset-game">Reset</button>
+          <div><h1>Dashboard</h1><p>Select a game to play.</p></div>
         </div>
 
-        <div class="canvas-wrap" style="margin-top:8px">
-          <!-- IDs expected by game.js -->
-          <div id="level-info"></div>
-          <div id="reward-info"></div>
-          <canvas id="game-canvas" width="960" height="420"></canvas>
-          <button id="next-level-btn" class="btn">Next Level</button>
-          <div id="stats"></div>
+        <div class="card" style="margin-top:12px">
+          <h2>Game Selection</h2>
+          <div class="game-selection-grid">
+          <div class="game-selection-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; padding: 20px;">
+            <a href="#/dragon-game" class="game-icon-card">
+              <img src="./img/dragon.jpg" alt="Dragon Game" style="width: 100px; height: 100px;">
+              <h3>Dragon Game</h3>
+            </a>
+            <a href="#/bird-game" class="game-icon-card">
+              <img src="./img/bird.png" alt="Bird Game" style="width: 100px; height: 100px;">
+              <h3>Bird Game</h3>
+            </a>
+            <a href="#/monster-game" class="game-icon-card">
+              <img src="./img/Monster.jpg" alt="Monster Game" style="width: 100px; height: 100px;">
+              <h3>Monster Game</h3>
+            </a>
+            <a href="#/add-game" class="game-icon-card">
+              <img src="./img/add.png" alt="Add more Game" style="width: 100px; height: 100px;">
+              <h3>Add More</h3>
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
-  `;
+      </section>
+    `;
+    // No game initialization here, as the user needs to select one.
+}
+
+function DragonGamePage() {
+  app.innerHTML = `
+      <section class="panel">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <div><h1>Dragon Game</h1><p>Control the dragon to hit the targets.</p></div>
+          <a class="btn secondary" href="#/dashboard">Back to Dashboard</a>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="row" style="justify-content:space-between; align-items:center;">
+            <div class="row" style="gap:8px;">
+              <h2 style="margin:0">Game</h2>
+              <span class="badge">Live</span>
+            </div>
+            <button class="btn secondary" id="reset-game">Reset</button>
+          </div>
+          <div class="canvas-wrap" style="margin-top:8px">
+            <div id="level-info"></div>
+            <div id="reward-info"></div>
+            <canvas id="game-canvas" width="960" height="420"></canvas>
+            <button id="next-level-btn" class="btn">Next Level</button>
+            <div id="stats"></div>
+          </div>
+        </div>
+      </section>
+    `;
   // Init game AFTER DOM is present
   if (typeof window.initInjuryGame === 'function') {
     window.initInjuryGame();
@@ -116,7 +154,6 @@ function DashboardPage() {
     if (typeof window.initInjuryGame === 'function') window.initInjuryGame();
   });
 }
-
 
 function CalendarPage() {
   const today = ymd(new Date());
@@ -520,24 +557,23 @@ function setupThemeToggle() {
 
   if (isDark) {
     document.body.classList.add('dark-theme');
-    icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
+    icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
   } else {
     document.body.classList.add('light-theme');
-    icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+    icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
   }
 
   toggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-theme');
     document.body.classList.toggle('light-theme');
     const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
+    localStorage.setItem('theme', currentTheme);});
     if (currentTheme === 'dark') {
-      icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
-    } else {
       icon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/>`;
+    } else {
+      icon.innerHTML = `<path d="M12 2a9.99 9.99 0 0 1 8 4c-1.33 3.4-6 6-8 6s-6.67-2.6-8-6a9.99 9.99 0 0 1 8-4z" />`;
     }
-  });
-}
+  };
 
 window.addEventListener('load', () => {
   router();

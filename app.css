@@ -166,6 +166,51 @@ body.dark-theme {
     cursor: pointer;
 }
 
+/* game icons*/
+/* Add this to your app.css file */
+
+.game-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.game-icon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.game-icon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent);
+}
+
+.game-icon-card img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.game-icon-card h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
 #theme-icon {
     width: 30px;
     height: 30px;
