@@ -27,8 +27,6 @@
   </header>
 
   <main id="app"></main>
-
-  <!-- Floating Chatbot UI ->
     <div id="floating-chatbot-container">
         <div class="chat-header">AI Chatbot</div>
         <div id="chatbox">
@@ -63,72 +61,4 @@
 <script src="theme-toggle.js"></script>
 </body>
 </html>
--->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>🐲Dragon Recovery</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="./app.css" />
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.auth0.com/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
-
-</head>
-<body class="dark-theme">
-    <header class="topbar">
-        <div class="brand">🐲Dragon Therapy</div>
-        <nav class="nav">
-            <a href="#/dashboard" id="nav-dashboard">Dashboard</a>
-            <a href="#/calendar" id="nav-calendar">Calendar</a>
-            <a href="#/results" id="nav-results">Results</a>
-            <a href="#/ai-insights" id="nav-ai-insights">AI Insights</a>
-        </nav>
-        
-        <div class="user-profile" id="user-profile" style="display: none; align-items: center; gap: 8px;">
-            <img id="user-picture" src="" alt="User profile" style="width: 32px; height: 32px; border-radius: 50%;"/>
-            <span id="user-name" style="color: var(--text);"></span>
-        </div>
-
-        <button class="btn" id="btn-login">Log In</button>
-        <button class="btn secondary" id="btn-logout" style="display: none;">Log Out</button>
-
-        <div class="theme-container">
-            <button id="theme-toggle" aria-label="Toggle dark/light theme">
-                <img id="theme-icon" src="./img/mode.png" alt="Dark theme">
-            </button>
-        </div>
-    </header>
-
-    <main id="app"></main>
-
-    <div id="floating-chatbot-container">
-        <div class="chat-header">AI Chatbot</div>
-        <div id="chatbox">
-            <div class="message system-message">
-                Hello! Ask me about the patient's progress.
-            </div>
-        </div>
-        <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Ask a question...">
-            <button id="chat-send-btn">Send</button>
-        </div>
-    </div>
-    <button id="chat-toggle-btn">Chat</button>
-
-    <script>
-    window.gameData = {
-        history: []
-    };
-    </script>
-    <script src="./Game/game.js"></script>
-    <script type="module" src="./app.js"></script>
-    <script src="./auth.js"></script> 
-
-</body>
-</html>
