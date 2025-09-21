@@ -1,0 +1,12 @@
+My Contributions
+
+My primary responsibilities included:
+
+Integrating the Google Gemini API to power the core chat functionality.
+
+Designing and implementing the updated graph and chatbox UI/UX.
+
+Debugging and resolving server-side port connection errors.
+
+This repository is my personal fork, used for showcasing my specific contributions to the project. You can find the original repository here. https://github.com/Kami1230/Dragon-Therapy1
+
